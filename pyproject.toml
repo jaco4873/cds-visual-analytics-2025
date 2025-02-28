@@ -1,0 +1,24 @@
+[project]
+name = "visual-exam"
+version = "1.0.0"
+description = "Visual Analytics exam project implementing computer vision techniques including image search, feature extraction, and analysis. Built with Python 3.12 and OpenCV, demonstrating practical applications through progressive assignments."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+  "pandas",
+  "numpy",
+  "matplotlib",
+  "opencv-python",
+  "scikit-learn",
+  "scikeras",
+  "pytest",
+  "tensorflow-cpu; sys_platform == 'linux'",
+  "tensorflow-macos; sys_platform == 'darwin' and platform_machine == 'arm64'",
+  "tensorflow; sys_platform == 'darwin' and platform_machine == 'x86_64'",
+]
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
