@@ -1,35 +1,42 @@
 """
-Utility functions for logging.
+Logger utility for application-wide logging.
 """
 
 import logging
+import sys
 
 
-def get_logger() -> logging.Logger:
+def get_logger(
+    name: str = "cifar10_classifier",
+    log_level: int = logging.INFO,
+) -> logging.Logger:
     """
-    Root logger for the shared library.
+    Configure and return a logger instance.
+
+    Args:
+        name: Name of the logger
+        log_level: Logging level (e.g., logging.INFO, logging.DEBUG)
+
+    Returns:
+        Configured logger instance
     """
-    logger = logging.getLogger()
+    # Create logger
+    logger = logging.getLogger(name)
+    logger.setLevel(log_level)
 
-    if not logger.handlers:
-        # Set logging level
-        logger.setLevel(logging.INFO)
+    # Create formatter
+    formatter = logging.Formatter(
+        "[%(asctime)s] %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+    )
 
-        # Create console handler
-        handler = logging.StreamHandler()
-        handler.setLevel(logging.INFO)
-
-        # Create formatter
-        formatter = logging.Formatter(
-            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-        )
-        handler.setFormatter(formatter)
-
-        # Add handler to logger
-        logger.addHandler(handler)
+    # Add console handler
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setFormatter(formatter)
+    logger.addHandler(console_handler)
 
     return logger
 
 
-# Create a top level logger
+# Default application logger instance
 logger = get_logger()

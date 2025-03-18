@@ -7,23 +7,54 @@ This repository contains the exam project for the Visual Analytics course, imple
 The project is organized into multiple assignments, each focusing on different aspects of visual analytics:
 
 - **Assignment 1**: Simple image search algorithm using color histograms
+- **Assignment 2**: Image classification benchmarks with Logistic Regression and Neural Networks
 - *(Additional assignments will be added as the course progresses)*
 
 ## Project Structure
 
 ```
 .
-├── README.md                  # This file
-├── setup.sh                   # Setup script for environment configuration
+├── README.md                  # Main documentation file
+├── pyproject.toml             # Project configuration and dependencies
 ├── pytest.ini                 # Configuration for pytest
-└── src/                       # Source code directory
-    ├── assignment_1/          # Assignment 1 implementation
-    │   ├── README.md          # Specific documentation for Assignment 1
-    │   ├── main.py            # Main script for Assignment 1
-    │   └── output/            # Results and output files
-    └── shared_lib/            # Shared utilities and services
-        ├── services/          # Service classes (e.g., ImageSearchService)
-        └── utils/             # Utility functions
+├── setup.sh                   # Setup script for environment configuration
+├── uv.lock                    # Lock file for uv package manager
+├── src/                       # Source code directory
+│   ├── assignment_1/          # Assignment 1 implementation
+│   │   ├── README.md          # Documentation for Assignment 1
+│   │   ├── assignment_description.md  # Assignment 1 specifications
+│   │   ├── main.py            # Main script for Assignment 1
+│   │   └── output/            # Results and output files
+│   │       └── results.csv    # Sample output results
+│   ├── assignment_2/          # Assignment 2 implementation
+│   │   ├── README.md          # Documentation for Assignment 2
+│   │   ├── assignment_description.md  # Assignment 2 specifications
+│   │   ├── main.py            # Main script for Assignment 2
+│   │   ├── config.py          # Configuration for Assignment 2
+│   │   ├── classifiers/       # Classification implementations
+│   │   │   ├── base_classifier.py     # Abstract base class
+│   │   │   ├── logistic_regression.py # Logistic regression implementation
+│   │   │   └── neural_network.py      # Neural network implementation
+│   │   ├── utils/             # Assignment-specific utilities
+│   │   │   └── cifar_10.py    # CIFAR-10 dataset handling
+│   │   └── out/               # Output directory
+│   ├── data/                  # Data files for assignments (not commited to GH)
+│   └── shared_lib/            # Shared utilities and services
+│       ├── README.md          # Documentation for shared library
+│       ├── services/          # Service classes
+│       │   └── image_search.py        # Image search functionality
+│       └── utils/             # Utility functions
+│           ├── base_config.py         # Base configuration class
+│           ├── file_utils.py          # File handling utilities
+│           ├── image_utils.py         # Image processing utilities
+│           ├── logger.py              # Logging functionality
+│           ├── model_evaluation.py    # Model evaluation utilities
+│           └── visualization.py       # Visualization utilities
+└── tests/                     # Test directory
+    └── utils/                 # Tests for utility functions
+        ├── test_file_utils.py         # Tests for file utilities
+        ├── test_image_utils.py        # Tests for image utilities
+        └── test_visualization.py      # Tests for visualization utilities
 ```
 
 ## Requirements
@@ -94,6 +125,23 @@ This will:
 5. Print the results to the console
 
 For more details, see the [Assignment 1 README](src/assignment_1/README.md).
+
+### Assignment 2: CIFAR-10 Image Classification
+
+Run the assignment with:
+
+```bash
+# Run both classifiers
+uv run -m assignment_2.main
+
+# Run only Logistic Regression
+uv run -m assignment_2.main --model logistic_regression
+
+# Run only Neural Network
+uv run -m assignment_2.main --model neural_network
+```
+
+For more details and configurable options, see the [Assignment 2 README](src/assignment_2/README.md).
 
 ## Testing
 

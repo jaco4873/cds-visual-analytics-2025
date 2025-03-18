@@ -1,0 +1,20 @@
+Model: LogisticRegression
+
+Parameters:
+  C: 0.1
+  class_weight: None
+  dual: False
+  fit_intercept: True
+  intercept_scaling: 1
+  l1_ratio: None
+  max_iter: 1000
+  multi_class: deprecated
+  n_jobs: -1
+  penalty: l2
+  random_state: None
+  solver: saga
+  tol: 0.001
+  verbose: 1
+  warm_start: False
+
+Number of iterations: [122]
