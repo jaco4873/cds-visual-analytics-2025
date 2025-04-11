@@ -85,13 +85,3 @@ The code is organized in a modular way:
 
 - Histograms are computed once and stored in memory for efficient comparison
 - The implementation uses OpenCV's optimized functions for histogram extraction and comparison
-
-## Assignment Requirements Fulfillment
-
-The implementation satisfies all requirements specified in the assignment:
-
-1. ✅ Defines a target image to work with (default: `image_0001.jpg`)
-2. ✅ Extracts color histograms for the target and all other images
-3. ✅ Compares histograms using `cv2.compareHist()` with the `cv2.HISTCMP_CHISQR` metric
-4. ✅ Finds the five most similar images to the target
-5. ✅ Saves results to a CSV file with filenames and distance metrics
