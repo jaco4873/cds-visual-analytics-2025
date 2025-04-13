@@ -15,8 +15,8 @@ from assignment_2.classifiers.logistic_regression import (
     LogisticRegressionClassifier,
 )
 from assignment_2.classifiers.neural_network import NeuralNetworkClassifier
-from shared_lib.utils.file_utils import ensure_directory_exists
-from shared_lib.utils.logger import logger
+from shared_lib.file_utils import ensure_directory_exists
+from shared_lib.logger import logger
 
 
 def main() -> None:

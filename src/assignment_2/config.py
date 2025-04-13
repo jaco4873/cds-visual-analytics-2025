@@ -2,13 +2,13 @@
 Configuration for CIFAR-10 image classification tasks.
 """
 
+from pydantic_settings import BaseSettings
 import logging
 from typing import Literal, Union
 
-from shared_lib.utils.base_config import BasePydanticConfig
 
 
-class LogisticRegressionConfig(BasePydanticConfig):
+class LogisticRegressionConfig(BaseSettings):
     """Configuration for Logistic Regression model.
 
     Defines hyperparameters and training settings for logistic regression classifier.
@@ -39,7 +39,7 @@ class LogisticRegressionConfig(BasePydanticConfig):
     c: float = 0.1
 
 
-class NeuralNetworkConfig(BasePydanticConfig):
+class NeuralNetworkConfig(BaseSettings):
     """Configuration for Neural Network model.
 
     Defines architecture, hyperparameters and training settings for MLP classifier.
@@ -106,7 +106,7 @@ class NeuralNetworkConfig(BasePydanticConfig):
     tol: float = 0.0001
 
 
-class CIFAR10Config(BasePydanticConfig):
+class CIFAR10Config(BaseSettings):
     """Configuration for CIFAR-10 image classification task.
 
     This class defines configuration parameters for data preprocessing,

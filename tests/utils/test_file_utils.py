@@ -4,7 +4,7 @@ Pytest tests for file utility functions.
 
 import os
 import pytest
-from src.shared_lib.utils.file_utils import (
+from shared_lib.file_utils import (
     ensure_directory_exists,
     get_file_extension,
     get_filename,

@@ -12,13 +12,13 @@ from assignment_2.utils.cifar_10 import (
     preprocess_cifar10,
     get_cifar10_class_names,
 )
-from shared_lib.utils.model_evaluation import (
+from shared_lib.model_evaluation import (
     generate_classification_report,
     plot_confusion_matrix,
     save_model_info,
 )
-from shared_lib.utils.file_utils import ensure_directory_exists
-from shared_lib.utils.logger import logger
+from shared_lib.file_utils import ensure_directory_exists
+from shared_lib.logger import logger
 
 
 class BaseClassifier(ABC):

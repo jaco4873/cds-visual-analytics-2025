@@ -15,7 +15,8 @@ dependencies = [
   "tensorflow-cpu; sys_platform == 'linux'",
   "tensorflow-macos; sys_platform == 'darwin' and platform_machine == 'arm64'",
   "tensorflow; sys_platform == 'darwin' and platform_machine == 'x86_64'",
-  "pydantic>=2.10.6",
+  "pydantic-settings>=2.8.1",
+  "pydantic>=2.11.3",
 ]
 
 [tool.setuptools]

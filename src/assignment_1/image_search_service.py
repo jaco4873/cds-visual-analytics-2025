@@ -5,14 +5,14 @@ Service for image search functionality.
 import os
 import cv2
 import pandas as pd
-from shared_lib.utils.image_utils import (
+from shared_lib.image_utils import (
     load_image,
     extract_color_histogram,
     compare_histograms,
     get_image_files,
 )
-from shared_lib.utils.file_utils import ensure_directory_exists, get_filename
-from shared_lib.utils.logger import logger
+from shared_lib.file_utils import ensure_directory_exists, get_filename
+from shared_lib.logger import logger
 
 
 class ImageSearchService:

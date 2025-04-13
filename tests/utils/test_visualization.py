@@ -11,7 +11,7 @@ import matplotlib
 # Set the backend to 'Agg' before importing pyplot
 matplotlib.use("Agg")
 from unittest.mock import patch
-from src.shared_lib.utils.visualization import (
+from shared_lib.visualization import (
     display_image,
     display_multiple_images,
     plot_histogram,

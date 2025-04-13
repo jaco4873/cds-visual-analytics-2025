@@ -9,8 +9,8 @@ from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.neural_network import MLPClassifier
 from typing import Any
 
-from shared_lib.utils.file_utils import ensure_directory_exists
-from shared_lib.utils.logger import logger
+from shared_lib.file_utils import ensure_directory_exists
+from shared_lib.logger import logger
 
 
 def generate_classification_report(

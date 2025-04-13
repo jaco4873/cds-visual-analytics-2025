@@ -8,7 +8,7 @@ import numpy as np
 
 from assignment_2.classifiers.base_classifier import BaseClassifier
 from assignment_2.config import CIFAR10Config
-from shared_lib.utils.logger import logger
+from shared_lib.logger import logger
 
 
 class LogisticRegressionClassifier(BaseClassifier):

@@ -10,18 +10,15 @@ Date: 2025-02-28
 
 import os
 import cv2
-from shared_lib.services.image_search import ImageSearchService
-from shared_lib.utils.file_utils import ensure_directory_exists
-from shared_lib.utils.logger import logger
-
-# Configuration parameters
-DATASET_FOLDER = "data/17flowers"
-TARGET_IMAGE = "image_0001.jpg"
-OUTPUT_PATH = "assignment_1/output/results.csv"
-NUM_RESULTS = 5
+from assignment_1.image_search_service import ImageSearchService
+from shared_lib.file_utils import ensure_directory_exists
+from shared_lib.logger import logger
+from assignment_1.config import config
 
 
-def find_similar_images(dataset_path, target_image_path, output_path, num_results=5):
+def find_similar_images(
+    dataset_path: str, target_image_path: str, output_path: str, num_results: int = 5
+):
     """
     Find images similar to a target image based on color histograms.
 
@@ -72,26 +69,34 @@ def main():
     This function defines the parameters for the image search and calls
     the find_similar_images function.
     """
+
     project_root = os.path.dirname(
         os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     )
 
-    dataset_path = os.path.join(project_root, DATASET_FOLDER)
-    target_image_path = os.path.join(dataset_path, TARGET_IMAGE)
+    dataset_path = os.path.join(project_root, config.dataset_folder)
+    target_image_path = os.path.join(dataset_path, config.target_image)
 
     try:
         # Find similar images
+        logger.info(f"Dataset path: {dataset_path}")
+        logger.info(f"Target image path: {target_image_path}")
+        logger.info(f"Output path: {config.output_path}")
+        logger.info(f"Number of results: {config.num_results}")
+        logger.info("Starting image search. This may take a while...")
         similar_images = find_similar_images(
             dataset_path=dataset_path,
             target_image_path=target_image_path,
-            output_path=OUTPUT_PATH,
-            num_results=NUM_RESULTS,
+            output_path=config.output_path,
+            num_results=config.num_results,
         )
+        
+        logger.info("Image search completed successfully!")
 
-        # Print results for verification
-        print("\nMost similar images:")
+        # Log results for verification
+        logger.info("Most similar images:")
         for i, (image_path, distance) in enumerate(similar_images):
-            print(f"{i + 1}. {os.path.basename(image_path)}: {distance:.4f}")
+            logger.info(f"{i + 1}. {os.path.basename(image_path)}: {distance:.4f}")
 
     except Exception as e:
         logger.error(f"Error during image search: {e}")

@@ -1,15 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-# This script should be sourced, not executed
-# Usage: source setup.sh
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    echo "❌ This script must be sourced, not executed."
-    echo "❓ Please run: source setup.sh"
-    exit 1
-fi
-
-echo "🚀 Starting project setup..."
+echo "🚀 Starting Visual Analytics setup..."
 
 # Detect the operating system
 if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -21,7 +13,7 @@ elif [[ "$OSTYPE" == "linux"* ]]; then
 else
     echo "❌ Unsupported operating system: $OSTYPE"
     echo "This script only supports macOS and Linux."
-    return 1  
+    exit 1  
 fi
 
 # Install uv if not already installed
@@ -37,7 +29,7 @@ fi
 if ! command -v uv &> /dev/null; then
     echo "❌ Failed to install uv. Please install it manually:"
     echo "   curl -LsSf https://astral.sh/uv/install.sh | sh"
-    return 1  
+    exit 1  
 fi
 
 echo "✅ uv is installed: $(uv --version)"
@@ -133,21 +125,27 @@ fi
 echo "🔨 Creating virtual environment with Python 3.12..."
 uv venv --python=3.12
 
-# Determine activation script path
-if [[ -f ".venv/bin/activate" ]]; then
-    ACTIVATE_PATH=".venv/bin/activate"
-else
-    echo "❌ Virtual environment activation script not found."
-    return 1 
-fi
-
-# Activate virtual environment
+# Activate the environment directly
 echo "🔌 Activating virtual environment..."
-source "$ACTIVATE_PATH"
+source .venv/bin/activate
 
 # Install dependencies with uv
 echo "📚 Installing project dependencies..."
 uv sync
 
+# Create necessary directories
+echo "📁 Creating required directories..."
+mkdir -p data models output
+
 echo "✅ Setup completed successfully!"
-echo "🎉 Virtual environment has been activated automatically!"
+
+echo ""
+echo "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓"
+echo "┃                                                                ┃"
+echo "┃   🌟 🌟 🌟  SETUP COMPLETE  🌟 🌟 🌟                           ┃"
+echo "┃                                                                ┃"
+echo "┃   ⚠️  For future sessions, activate with:                       ┃"
+echo "┃      source .venv/bin/activate                                 ┃"
+echo "┃                                                                ┃"
+echo "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛"
+echo ""

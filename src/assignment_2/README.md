@@ -15,6 +15,29 @@ The implementation follows a modular architecture with the following components:
 - **Visualization**: Plotting loss curves (for Neural Network)
 - **Configuration-Based**: Uses Pydantic models for flexible configuration
 
+## Quickstart
+If you haven't set up the environment yet, first run the setup script from the project root:
+
+```bash
+./setup.sh
+```
+
+To run the assignment directly, navigate to the src directory and execute:
+
+```bash
+cd src
+uv run -m src.assignment_2.main
+```
+
+Alternatively, use the run script from the project root for the easiest execution:
+
+```bash
+./run.sh
+```
+Then select option 2 from the menu.
+
+**Note:** Using the run.sh script will execute the assignment with default configurations only. For customized runs with different parameters, see the Advanced Execution Options section below.
+
 ## Project Structure
 
 ```
@@ -29,7 +52,7 @@ src/assignment_2/
 │   └── neural_network.py              # Neural Network implementation
 ├── utils/                             # Assignment-specific utilities
 │   └── cifar_10.py                    # Utilities for CIFAR-10 dataset handling
-└── out/                               # Primary results and output files directory
+└── output/                            # Primary results and output files directory
     ├── LogisticRegressionClassifier_confusion_matrix.png
     ├── LogisticRegressionClassifier_info.txt
     ├── LogisticRegressionClassifier_report.txt
@@ -52,20 +75,26 @@ Note: This project also has dependencies on the shared_lib module which provides
 - OpenCV
 - pydantic
 
-You can install the required packages with:
+You can install the required packages from the root of the repository with:
 
 ```bash
 uv sync
 ```
 
-## How to Run
-
-### Using Configuration-Based Approach
-
-The simplest way to run the classifiers is to use the `main.py` script:
+However, I recommend using the run script from the root of the repository for the easiest execution:
 
 ```bash
-python -m src.assignment_2.main
+./run.sh
+```
+
+## Advanced Execution Options
+
+The manual way to run the classifiers is to use the `main.py` script:
+
+```bash
+# Navigate to assignment directory
+cd src
+uv run -m src.assignment_2.main
 ```
 
 This will run both classifiers with default settings. The script uses a configuration object to control all aspects of the execution.
@@ -101,6 +130,17 @@ config = CIFAR10Config(
     neural_network=nn_config,
 )
 ```
+
+### Command Line Options
+
+The main.py script accepts the following command line arguments:
+
+--model: Which model to run [logistic_regression, neural_network, both]
+         Default: both
+
+Example usage:
+cd src
+uv run -m src.assignment_2.main --model neural_network
 
 ## Implementation Details
 
@@ -155,6 +195,24 @@ The classifiers generate the following outputs in the specified output directory
 - The Logistic Regression classifier provides a baseline performance but is limited in capturing complex patterns in image data.
 - The Neural Network classifier generally achieves higher accuracy but requires more computational resources.
 - Converting to grayscale reduces dimensionality (and training time) but impacts accuracy for color-sensitive classes.
+
+## Results Analysis
+
+The experiments on the CIFAR-10 dataset yielded interesting findings:
+
+### Logistic Regression Classifier
+- Achieved an overall accuracy of 29.58% on the test set
+- Best performance on truck (40.26% F1-score) and automobile (36.78% F1-score) classes
+- Struggled most with cat (18.63% F1-score) and deer (20.81% F1-score) classes
+- Converged after 121 iterations with the saga solver
+
+### Neural Network Classifier
+- Achieved a significantly higher overall accuracy of 43.17%
+- Best performance on ship (52.84% F1-score) and automobile (52.15% F1-score) classes
+- Still struggled with cats (26.33% F1-score), suggesting this class is inherently challenging
+- Early stopping triggered after 48 iterations
+
+Looking at both models, it's clear the neural network does a much better job with these complex images, even when converted to grayscale. It's interesting that cats were consistently the hardest class for both models to identify - probably because cats have more varied poses and appearances than other classes. I noticed vehicles (cars, trucks, ships) were the easiest to classify across both models, which makes sense since they have more consistent shapes and features. This pattern suggests that object distinctiveness matters more than the actual complexity of the object when it comes to classification performance.
 
 ## References
 

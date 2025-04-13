@@ -7,7 +7,7 @@ import sys
 
 
 def get_logger(
-    name: str = "cifar10_classifier",
+    name: str = "application_logger",
     log_level: int = logging.INFO,
 ) -> logging.Logger:
     """
@@ -24,10 +24,9 @@ def get_logger(
     logger = logging.getLogger(name)
     logger.setLevel(log_level)
 
-    # Create formatter
     formatter = logging.Formatter(
-        "[%(asctime)s] %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
+        "%(asctime)s %(levelname)s: %(message)s",
+        datefmt="%H:%M:%S",
     )
 
     # Add console handler

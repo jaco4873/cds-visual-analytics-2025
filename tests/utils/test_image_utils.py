@@ -6,7 +6,7 @@ import os
 import numpy as np
 import cv2
 import pytest
-from src.shared_lib.utils.image_utils import (
+from shared_lib.image_utils import (
     load_image,
     extract_color_histogram,
     compare_histograms,
