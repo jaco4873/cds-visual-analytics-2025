@@ -17,4 +17,4 @@ Parameters:
   verbose: 1
   warm_start: False
 
-Number of iterations: [121]
+Number of iterations: [120]

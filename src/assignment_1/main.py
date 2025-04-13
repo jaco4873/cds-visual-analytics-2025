@@ -1,7 +1,7 @@
 """
-Assignment 1: Image Search Algorithm
+Assignment 1: Image Search with Histograms and Embeddings
 
-This script implements a simple image search algorithm using color histograms
+This script orchestrates both histogram-based and embedding-based image search
 to find similar images in a dataset of flower images.
 
 Author: Jacob Lillelund
@@ -9,94 +9,100 @@ Date: 2025-02-28
 """
 
 import os
-import cv2
-from assignment_1.image_search_service import ImageSearchService
-from shared_lib.file_utils import ensure_directory_exists
+import argparse
 from shared_lib.logger import logger
-from assignment_1.config import config
-
-
-def find_similar_images(
-    dataset_path: str, target_image_path: str, output_path: str, num_results: int = 5
-):
-    """
-    Find images similar to a target image based on color histograms.
-
-    Args:
-        dataset_path (str): Path to the directory containing the image dataset.
-        target_image_path (str): Path to the target image.
-        output_path (str): Path to save the results CSV file.
-        num_results (int): Number of similar images to find.
-
-    Returns:
-        list: List of tuples containing (image_path, distance) sorted by similarity.
-    """
-    # Ensure output directory exists
-    ensure_directory_exists(os.path.dirname(output_path))
-
-    # Initialize the image search service
-    logger.info(f"Initializing image search service with dataset: {dataset_path}")
-    search_service = ImageSearchService(
-        image_directory=dataset_path,
-        histogram_bins=(8, 8, 8),
-        color_space="BGR",
-        comparison_method=cv2.HISTCMP_CHISQR,
-    )
-
-    # Extract histograms for all images in the dataset
-    logger.info("Extracting histograms for all images...")
-    search_service.extract_histograms()
-
-    # Find similar images
-    logger.info(f"Finding {num_results} images similar to {target_image_path}...")
-    similar_images = search_service.find_similar_images(
-        target_image_path=target_image_path,
-        num_results=num_results,
-    )
-
-    # Save results to CSV
-    logger.info(f"Saving results to {output_path}...")
-    search_service.save_results_to_csv(results=similar_images, output_path=output_path)
-
-    logger.info("Image search completed successfully!")
-    return similar_images
+from assignment_1.config import histogram_config, embedding_config
+from assignment_1.scripts.histogram_search import find_similar_images_with_histograms
+from assignment_1.scripts.embedding_search import find_similar_images_with_embeddings
 
 
 def main():
     """
-    Main function to execute the image search workflow.
-
-    This function defines the parameters for the image search and calls
-    the find_similar_images function.
+    Main function to execute both image search workflows.
     """
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(
+        description="Image Search with Histograms and Embeddings"
+    )
+    parser.add_argument(
+        "--method",
+        choices=["histogram", "embedding", "both"],
+        default="both",
+        help="Search method to use (histogram, embedding, or both)",
+    )
+    args = parser.parse_args()
 
+    # Get paths
     project_root = os.path.dirname(
         os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     )
 
-    dataset_path = os.path.join(project_root, config.dataset_folder)
-    target_image_path = os.path.join(dataset_path, config.target_image)
+    # Common dataset path
+    dataset_folder = (
+        histogram_config.dataset_folder
+    )  # Both configs have the same default
+    dataset_path = os.path.join(project_root, dataset_folder)
 
     try:
-        # Find similar images
-        logger.info(f"Dataset path: {dataset_path}")
-        logger.info(f"Target image path: {target_image_path}")
-        logger.info(f"Output path: {config.output_path}")
-        logger.info(f"Number of results: {config.num_results}")
-        logger.info("Starting image search. This may take a while...")
-        similar_images = find_similar_images(
-            dataset_path=dataset_path,
-            target_image_path=target_image_path,
-            output_path=config.output_path,
-            num_results=config.num_results,
-        )
-        
-        logger.info("Image search completed successfully!")
+        # Run histogram-based search if requested
+        if args.method in ["histogram", "both"]:
+            logger.info("=" * 50)
+            logger.info("RUNNING HISTOGRAM-BASED IMAGE SEARCH")
+            logger.info("=" * 50)
 
-        # Log results for verification
-        logger.info("Most similar images:")
-        for i, (image_path, distance) in enumerate(similar_images):
-            logger.info(f"{i + 1}. {os.path.basename(image_path)}: {distance:.4f}")
+            histogram_target_path = os.path.join(
+                dataset_path, histogram_config.target_image
+            )
+
+            similar_images_hist = find_similar_images_with_histograms(
+                dataset_path=dataset_path,
+                target_image_path=histogram_target_path,
+                output_path=histogram_config.output_path,
+                num_results=histogram_config.num_results,
+                histogram_bins=histogram_config.histogram_bins,
+                color_space=histogram_config.color_space,
+            )
+
+            logger.info("Histogram search results:")
+            for i, (image_path, distance) in enumerate(similar_images_hist):
+                logger.info(f"{i + 1}. {os.path.basename(image_path)}: {distance:.4f}")
+
+        # Run embedding-based search if requested
+        if args.method in ["embedding", "both"]:
+            logger.info("=" * 50)
+            logger.info("RUNNING EMBEDDING-BASED IMAGE SEARCH")
+            logger.info("=" * 50)
+
+            embedding_target_path = os.path.join(
+                dataset_path, embedding_config.target_image
+            )
+
+            similar_images_emb = find_similar_images_with_embeddings(
+                dataset_path=dataset_path,
+                target_image_path=embedding_target_path,
+                output_path=embedding_config.output_path,
+                num_results=embedding_config.num_results,
+                input_shape=embedding_config.input_shape,
+                pooling=embedding_config.pooling,
+                include_top=embedding_config.include_top,
+            )
+
+            logger.info("Embedding search results:")
+            for i, (image_path, similarity) in enumerate(similar_images_emb):
+                logger.info(
+                    f"{i + 1}. {os.path.basename(image_path)}: {similarity:.4f}"
+                )
+
+        logger.info("=" * 50)
+        logger.info("IMAGE SEARCH COMPLETED SUCCESSFULLY")
+        if args.method == "both":
+            logger.info(f"Histogram results saved to: {histogram_config.output_path}")
+            logger.info(f"Embedding results saved to: {embedding_config.output_path}")
+        elif args.method == "histogram":
+            logger.info(f"Results saved to: {histogram_config.output_path}")
+        else:
+            logger.info(f"Results saved to: {embedding_config.output_path}")
+        logger.info("=" * 50)
 
     except Exception as e:
         logger.error(f"Error during image search: {e}")

@@ -53,14 +53,14 @@ After setup, you can run individual assignments:
 source .venv/bin/activate
 
 # Run Assignment 1
-cd src && uv run -m assignment_1.main
+uv run -m assignment_1.main --method both
+uv run -m assignment_1.main --method histogram # Run only histogram-based search
+uv run -m assignment_1.main --method embedding # Run only embedding-based search
 
-# Run Assignment 2 (all models)
-cd src && uv run -m assignment_2.main
-
-# Run Assignment 2 with specific model
-cd src && uv run -m assignment_2.main --model logistic_regression
-cd src && uv run -m assignment_2.main --model neural_network
+# Run Assignment 2
+cd src && uv run -m assignment_2.main # Run both models
+cd src && uv run -m assignment_2.main --model logistic_regression # Run only logistic regression model
+cd src && uv run -m assignment_2.main --model neural_network # Run only neural network model
 ```
 **Note:** See assignment-specific README's for more information on running individual assignments and configuration options.
 
@@ -77,6 +77,8 @@ Each assignment has its own README file with detailed information:
 ├── README.md # Main documentation file
 ├── src/ # Source code directory
 │ ├── assignment_1/ # Assignment 1 implementation (image search)
+│ │ ├── scripts/ # Implementation scripts for search algorithms
+│ │ ├── services/ # Service components for search functionality
 │ │ └── output/ # Assignment 1 specific outputs
 │ ├── assignment_2/ # Assignment 2 implementation (image classification)
 │ │ ├── classifiers/ # Classification model implementations
@@ -85,7 +87,6 @@ Each assignment has its own README file with detailed information:
 │ └── shared_lib/ # Shared utilities used across assignments
 └── tests/ # Test directory
 ```
-
 ## Requirements
 
 - Python 3.12
@@ -103,3 +104,4 @@ pytest
 ```
 
 The `pytest.ini` file ensures that the project root is in the Python path, allowing imports to work correctly.
+

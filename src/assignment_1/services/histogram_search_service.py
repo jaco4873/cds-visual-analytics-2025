@@ -1,5 +1,5 @@
 """
-Service for image search functionality.
+Service for histogram-based image search functionality.
 """
 
 import os
@@ -15,7 +15,7 @@ from shared_lib.file_utils import ensure_directory_exists, get_filename
 from shared_lib.logger import logger
 
 
-class ImageSearchService:
+class HistogramSearchService:
     """
     Service for searching similar images based on color histograms.
     """
@@ -32,7 +32,7 @@ class ImageSearchService:
         comparison_method: int = cv2.HISTCMP_CHISQR,
     ):
         """
-        Initialize the image search service.
+        Initialize the histogram search service.
 
         Args:
             image_directory: Directory containing the image dataset.
@@ -53,7 +53,7 @@ class ImageSearchService:
                 f"Unsupported color space: {color_space}. Use 'BGR' or 'HSV'."
             )
 
-        # Initialize the image search service
+        # Initialize the histogram search service
         self.image_directory = image_directory
         self.histogram_bins = list(histogram_bins)
         self.color_space = color_space

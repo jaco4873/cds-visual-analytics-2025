@@ -1,11 +1,14 @@
-# Assignment 1: Building a Simple Image Search Algorithm
+# Assignment 1: Image Search with Histograms and Image Embeddings
 
 ## Overview
-For this assignment, you'll be using OpenCV to design a simple image search algorithm. The dataset is a collection of over 1000 images of flowers, sampled from 17 different species. The dataset comes from the Visual Geometry Group at the University of Oxford. Full details of the data can be found [here](https://www.robots.ox.ac.uk/~vgg/data/flowers/17/index.html).
+For this assignment, you'll be using OpenCV and pretrained CNNs via TensorFlow to design different image search algorithms. The dataset is a collection of over 1000 images of flowers, sampled from 17 different species. The dataset comes from the Visual Geometry Group at the University of Oxford. Full details of the data can be found [here](https://www.robots.ox.ac.uk/~vgg/data/flowers/17/index.html).
 
 ## Instructions
 
-Your task is to write code that performs the following steps:
+For this exercise, you should write two .py scripts:
+
+### Script 1: Histogram-based Search
+Your first script should perform the following steps:
 
 1. Define a particular image that you want to work with
 2. For that image:
@@ -23,11 +26,18 @@ Your task is to write code that performs the following steps:
 | filename2| ---      |
 | ...      | ...      |
 
+### Script 2: CNN Embedding-based Search
+Your second script should do fundamentally the same thing, with the following exceptions:
+- Extract image embeddings using VGG16
+- Calculate cosine similarities to the target image
+- Return results in the same way with a CSV showing the five most similar images to the target image
+
 ## Objective
 
 This assignment is designed to test that you can:
 - Work with larger datasets of images
 - Extract structured information from image data using OpenCV
+- Use pretrained CNNs in TensorFlow to extract and compare image embeddings
 - Quantitatively compare images based on these features, performing distant viewing
 
 ## Notes

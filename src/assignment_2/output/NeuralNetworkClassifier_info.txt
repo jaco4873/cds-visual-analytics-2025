@@ -25,7 +25,7 @@ Parameters:
   verbose: True
   warm_start: False
 
-Number of iterations: 48
+Number of iterations: 43
 Number of layers: 5
 Number of outputs: 10
 Output activation: softmax
