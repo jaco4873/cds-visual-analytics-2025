@@ -8,6 +8,7 @@ The project is organized into multiple assignments, each focusing on different a
 
 - **Assignment 1**: Simple image search algorithm using color histograms
 - **Assignment 2**: Image classification benchmarks with Logistic Regression and Neural Networks
+- **Assignment 3**: Transfer learning with pretrained CNNs for Lego brick classification
 - *(Additional assignments will be added as the course progresses)*
 
 ## Quickstart
@@ -61,6 +62,11 @@ uv run -m assignment_1.main --method embedding # Run only embedding-based search
 cd src && uv run -m assignment_2.main # Run both models
 cd src && uv run -m assignment_2.main --model logistic_regression # Run only logistic regression model
 cd src && uv run -m assignment_2.main --model neural_network # Run only neural network model
+
+# Run Assignment 3
+cd src && uv run -m assignment_3.main # Run both CNN and VGG16 models
+cd src && uv run -m assignment_3.main --cnn_only # Run only the direct CNN model
+cd src && uv run -m assignment_3.main --vgg16_only # Run only the VGG16 transfer learning model
 ```
 **Note:** See assignment-specific README's for more information on running individual assignments and configuration options.
 
@@ -70,6 +76,7 @@ Each assignment has its own README file with detailed information:
 
 - [Assignment 1 README](src/assignment_1/README.md)
 - [Assignment 2 README](src/assignment_2/README.md)
+- [Assignment 3 README](src/assignment_3/README.md)
 
 ## Project Structure
 
@@ -84,6 +91,9 @@ Each assignment has its own README file with detailed information:
 │ │ ├── classifiers/ # Classification model implementations
 │ │ ├── utils/ # Assignment-specific utilities
 │ │ └── output/ # Output directory for results
+│ ├── assignment_3/ # Assignment 3 implementation (transfer learning)
+│ │ ├── services/ # Service components for CNN and VGG16 models
+│ │ └── output/ # Output directory for model results
 │ └── shared_lib/ # Shared utilities used across assignments
 └── tests/ # Test directory
 ```
@@ -104,4 +114,3 @@ pytest
 ```
 
 The `pytest.ini` file ensures that the project root is in the Python path, allowing imports to work correctly.
-

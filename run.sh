@@ -32,7 +32,7 @@ show_menu() {
     echo "Please select an assignment to run:"
     echo "1) Assignment 1"
     echo "2) Assignment 2"
-    echo "3) Assignment 3 (Not available yet)"
+    echo "3) Assignment 3"
     echo "q) Quit"
     echo ""
 }
@@ -80,7 +80,17 @@ run_assignment() {
             ;;
         3)
             show_assignment_header $1
-            echo "⚠️ Assignment 3 is not available yet."
+            echo "🚀 Running Assignment 3 with default configuration..."
+            
+            # Check if Lego dataset directory exists
+            if [ ! -d "data/lego" ]; then
+                echo "⚠️ Lego dataset not found in data/lego directory."
+                echo "Please download the Lego dataset from UCloud and place it in the data/lego directory."
+                show_assignment_footer $1
+                return
+            fi
+            
+            (cd src && uv run -m assignment_3.main)
             show_assignment_footer $1
             ;;
         *)

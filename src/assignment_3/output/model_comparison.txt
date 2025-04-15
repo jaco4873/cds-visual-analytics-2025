@@ -1,0 +1,14 @@
+Model Comparison:
+
+CNN Model:
+- Final validation accuracy: 0.1441
+- Training epochs: 15
+
+VGG16 Transfer Learning Model:
+- Final validation accuracy: 0.6310
+- Training epochs: 5
+
+Improvement with VGG16: 48.69%
+
+Conclusion:
+VGG16 transfer learning improved performance.

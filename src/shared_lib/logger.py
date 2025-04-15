@@ -22,7 +22,13 @@ def get_logger(
     """
     # Create logger
     logger = logging.getLogger(name)
+
+    # Clear any existing handlers to prevent duplicate logs
+    if logger.handlers:
+        logger.handlers.clear()
+
     logger.setLevel(log_level)
+    logger.propagate = False  # Prevent propagation to parent loggers
 
     formatter = logging.Formatter(
         "%(asctime)s %(levelname)s: %(message)s",
@@ -37,5 +43,5 @@ def get_logger(
     return logger
 
 
-# Default application logger instance
+# Create a singleton logger instance
 logger = get_logger()
