@@ -7,8 +7,10 @@ This assignment implements two approaches for classifying Lego brick images:
 
 The goal is to compare these two approaches and determine whether transfer learning improves performance for this specific image classification task.
 
-## Dataset
-The dataset consists of images of various Lego bricks arranged in folders named after the brick type. The data should be placed in the `data/lego` directory. We use thee data from the "Cropped Images" folder, which contains images with backgrounds removed.
+## Dataset & Processing
+- Source and format: The dataset consists of images of various Lego bricks arranged in folders named after the brick type. The data should be placed in the `data/lego` directory. We use thee data from the "Cropped Images" folder, which contains images with backgrounds removed.
+- Core preprocessing steps: Images are resized to 224×224 pixels with 3 color channels, Batches of 32 images are processed at a time, Data is split with 20% for validation during training, Image normalization scales pixel values to [0-1]
+- Data augmentation (horizontal flipping only)
 
 ## Project Structure
 ```
@@ -47,9 +49,6 @@ src/assignment_3/
 - Data is split with 20% for validation during training
 - Image normalization scales pixel values to [0-1]
 - Data augmentation is applied to improve model robustness:
-  - Rotation (±20 degrees)
-  - Zoom (±15%)
-  - Width/height shifts (±20%)
   - Horizontal flipping
 
 ### CNN Model Architecture

@@ -87,7 +87,7 @@ class DataService:
         def augment(
             images: tf.Tensor, labels: tf.Tensor
         ) -> tuple[tf.Tensor, tf.Tensor]:
-            # Add random horizontal flipping (matching notebook's augmentation)
+            # Add random horizontal flipping
             images = tf.image.random_flip_left_right(images)
             return images, labels
 
