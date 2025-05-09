@@ -33,6 +33,7 @@ show_menu() {
     echo "1) Assignment 1"
     echo "2) Assignment 2"
     echo "3) Assignment 3"
+    echo "4) Assignment 4"
     echo "q) Quit"
     echo ""
 }
@@ -91,6 +92,22 @@ run_assignment() {
             fi
             
             (cd src && uv run -m assignment_3.main)
+            show_assignment_footer $1
+            ;;
+        4)
+            show_assignment_header $1
+            echo "🚀 Running Assignment 4 with default configuration..."
+            
+            # Check if newspaper dataset directory exists
+            if [ ! -d "data/newspapers/images" ]; then
+                echo "⚠️ Newspaper dataset not found in data/newspapers/images directory."
+                echo "Please download the Swiss newspapers dataset from Zenodo and place it in the data/newspapers/images directory."
+                echo "Dataset URL: https://zenodo.org/records/3706863"
+                show_assignment_footer $1
+                return
+            fi
+            
+            (cd src && uv run -m assignment_4.main)
             show_assignment_footer $1
             ;;
         *)

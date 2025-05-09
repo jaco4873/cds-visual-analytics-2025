@@ -135,7 +135,7 @@ uv sync
 
 # Create necessary directories
 echo "📁 Creating required directories..."
-mkdir -p data models output
+mkdir -p data
 
 echo "✅ Setup completed successfully!"
 
