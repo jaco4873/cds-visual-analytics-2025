@@ -9,29 +9,27 @@ Date: 2025-02-28
 """
 
 import os
-import argparse
+import click
 from shared_lib.logger import logger
 from assignment_1.config import histogram_config, embedding_config
 from assignment_1.scripts.histogram_search import find_similar_images_with_histograms
 from assignment_1.scripts.embedding_search import find_similar_images_with_embeddings
 
 
-def main():
+@click.command(help="Image Search with Histograms and Embeddings")
+@click.option(
+    "--method",
+    type=click.Choice(["histogram", "embedding", "both"], case_sensitive=False),
+    default="both",
+    help="Search method to use (histogram, embedding, or both)",
+)
+def main(method):
     """
-    Main function to execute both image search workflows.
-    """
-    # Parse command line arguments
-    parser = argparse.ArgumentParser(
-        description="Image Search with Histograms and Embeddings"
-    )
-    parser.add_argument(
-        "--method",
-        choices=["histogram", "embedding", "both"],
-        default="both",
-        help="Search method to use (histogram, embedding, or both)",
-    )
-    args = parser.parse_args()
+    Execute image search using histograms and/or embeddings.
 
+    This tool finds similar images to a target image using either color histograms,
+    deep learning embeddings, or both approaches.
+    """
     # Get paths
     project_root = os.path.dirname(
         os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -45,7 +43,7 @@ def main():
 
     try:
         # Run histogram-based search if requested
-        if args.method in ["histogram", "both"]:
+        if method in ["histogram", "both"]:
             logger.info("=" * 50)
             logger.info("RUNNING HISTOGRAM-BASED IMAGE SEARCH")
             logger.info("=" * 50)
@@ -68,7 +66,7 @@ def main():
                 logger.info(f"{i + 1}. {os.path.basename(image_path)}: {distance:.4f}")
 
         # Run embedding-based search if requested
-        if args.method in ["embedding", "both"]:
+        if method in ["embedding", "both"]:
             logger.info("=" * 50)
             logger.info("RUNNING EMBEDDING-BASED IMAGE SEARCH")
             logger.info("=" * 50)
@@ -95,10 +93,10 @@ def main():
 
         logger.info("=" * 50)
         logger.info("IMAGE SEARCH COMPLETED SUCCESSFULLY")
-        if args.method == "both":
+        if method == "both":
             logger.info(f"Histogram results saved to: {histogram_config.output_path}")
             logger.info(f"Embedding results saved to: {embedding_config.output_path}")
-        elif args.method == "histogram":
+        elif method == "histogram":
             logger.info(f"Results saved to: {histogram_config.output_path}")
         else:
             logger.info(f"Results saved to: {embedding_config.output_path}")

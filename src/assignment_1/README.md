@@ -10,6 +10,16 @@ The project uses the 17 Category Flower Dataset from the Visual Geometry Group a
 
 **Note**: The dataset will be automatically downloaded when running the assignment if it's not already present. You don't need to manually download and extract the dataset unless you want to prepare it beforehand.
 
+## Requirements
+- Python 3.12+
+- OpenCV
+- TensorFlow
+- NumPy
+- Scikit-learn
+- Pandas
+- Matplotlib
+- Click
+
 ## Quickstart
 If you haven't set up the environment yet, first run the setup script from the project root:
 
@@ -24,7 +34,9 @@ cd src
 uv run -m assignment_1.main
 ```
 
-You can specify which method to use with the `--method` argument:
+### Command Line Options
+
+You can specify which method to use with the `--method` option:
 ```bash
 # Run only histogram-based search
 uv run -m assignment_1.main --method histogram
@@ -34,6 +46,11 @@ uv run -m assignment_1.main --method embedding
 
 # Run both methods (default)
 uv run -m assignment_1.main --method both
+```
+
+You can also get help information:
+```bash
+uv run -m assignment_1.main --help
 ```
 
 The script will:

@@ -11,7 +11,6 @@ Date: 2025-02-28
 import os
 import cv2
 from assignment_1.services.histogram_search_service import HistogramSearchService
-from shared_lib.file_utils import ensure_directory_exists
 from shared_lib.logger import logger
 from assignment_1.config import histogram_config
 
@@ -39,7 +38,7 @@ def find_similar_images_with_histograms(
         list: List of tuples containing (image_path, distance) sorted by similarity.
     """
     # Ensure output directory exists
-    ensure_directory_exists(os.path.dirname(output_path))
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
     # Initialize the histogram search service
     logger.info(f"Initializing histogram search service with dataset: {dataset_path}")

@@ -25,7 +25,7 @@ def download_and_extract_dataset(dataset_url: str, target_dir: str) -> bool:
     """
     try:
         # Create data directory if it doesn't exist
-        data_dir = Path(target_dir).parent
+        data_dir = Path(target_dir).parent.parent
         os.makedirs(data_dir, exist_ok=True)
 
         # Create a temporary extraction directory
@@ -73,7 +73,7 @@ if __name__ == "__main__":
     DATASET_URL = "https://www.robots.ox.ac.uk/~vgg/data/flowers/17/17flowers.tgz"
 
     # Get the project root directory (2 levels up from this script)
-    project_root = Path(__file__).absolute().parent.parent.parent
+    project_root = Path(__file__).absolute().parent.parent.parent.parent
 
     # Change to project root directory to ensure paths are correct
     os.chdir(project_root)

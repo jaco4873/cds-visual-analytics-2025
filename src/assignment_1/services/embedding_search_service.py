@@ -9,8 +9,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
 from tensorflow.keras.applications.vgg16 import VGG16, preprocess_input
 
-from shared_lib.image_utils import get_image_files
-from shared_lib.file_utils import ensure_directory_exists, get_filename
+from assignment_1.utils.image_utils import get_image_files, get_filename
 from shared_lib.logger import logger
 
 
@@ -229,7 +228,7 @@ class EmbeddingSearchService:
             raise ValueError("Cannot save empty results")
 
         try:
-            ensure_directory_exists(os.path.dirname(output_path))
+            os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
             # Create a DataFrame from the results
             df = pd.DataFrame(results, columns=["Filename", "Similarity"])

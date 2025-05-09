@@ -10,9 +10,8 @@ Date: 2025-02-28
 
 import os
 from assignment_1.services.embedding_search_service import EmbeddingSearchService
-from shared_lib.file_utils import ensure_directory_exists
-from shared_lib.logger import logger
 from assignment_1.config import embedding_config
+from shared_lib.logger import logger
 
 
 def find_similar_images_with_embeddings(
@@ -40,7 +39,7 @@ def find_similar_images_with_embeddings(
         list: List of tuples containing (image_path, similarity) sorted by similarity.
     """
     # Ensure output directory exists
-    ensure_directory_exists(os.path.dirname(output_path))
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
     # Initialize the embedding search service
     logger.info(f"Initializing embedding search service with dataset: {dataset_path}")

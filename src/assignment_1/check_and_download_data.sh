@@ -10,7 +10,7 @@ check_and_download_dataset() {
         if [[ "$download_dataset" == "" || "$download_dataset" == "y" || "$download_dataset" == "Y" ]]; then
             echo "🔄 Downloading dataset..."
             cd ../
-            PYTHONPATH=. uv run -m assignment_1.download_data
+            PYTHONPATH=. uv run -m assignment_1.scripts.download_data
             status=$?
             cd - > /dev/null
             

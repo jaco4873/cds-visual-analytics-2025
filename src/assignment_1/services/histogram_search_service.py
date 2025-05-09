@@ -5,13 +5,13 @@ Service for histogram-based image search functionality.
 import os
 import cv2
 import pandas as pd
-from shared_lib.image_utils import (
+from assignment_1.utils.image_utils import (
     load_image,
     extract_color_histogram,
     compare_histograms,
     get_image_files,
+    get_filename,
 )
-from shared_lib.file_utils import ensure_directory_exists, get_filename
 from shared_lib.logger import logger
 
 
@@ -191,7 +191,7 @@ class HistogramSearchService:
             raise ValueError("Cannot save empty results")
 
         try:
-            ensure_directory_exists(os.path.dirname(output_path))
+            os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
             # Create a DataFrame from the results
             df = pd.DataFrame(results, columns=["Filename", "Distance"])
