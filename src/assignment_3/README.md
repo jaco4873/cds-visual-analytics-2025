@@ -96,17 +96,17 @@ Then select option 3 from the menu.
 You can also run the code directly:
 ```bash
 # From the project root
-uv run -m assignment_1.main 
+python -m src.assignment_3.main 
 
 # With custom arguments
-uv run -m assignment_1.main  --data_dir /path/to/lego/data --output_dir /path/to/output
+python -m src.assignment_3.main --data-dir /path/to/lego/data --output-dir /path/to/output
 ```
 
 ### Command Line Arguments
-- `--data_dir`: Path to the Lego data directory (default: ./data/lego)
-- `--output_dir`: Path to save the output (default: ./src/assignment_3/output)
-- `--cnn_only`: Train only the CNN model
-- `--vgg16_only`: Train only the VGG16 model
+- `--data-dir`: Path to the Lego data directory (must exist and be a directory)
+- `--output-dir`: Path to save the output (default: ./src/assignment_3/output)
+- `--cnn-only`: Train only the CNN model
+- `--vgg16-only`: Train only the VGG16 model
 
 ## Results
 The experiment yielded striking differences between our two approaches. Here's what we found:
@@ -145,7 +145,7 @@ The VGG16 model's learning trajectory suggests we'd likely see additional gains 
 - The simplified classifier (single 128-unit dense layer) prevented overfitting while leveraging VGG16's robust feature extraction
 - Setting trainable_layers=0 (complete feature freezing) proved highly effective, demonstrating that ImageNet features transfer well to Lego classification
 
-Interestingly, the VGG16 model achieved superior results despite using fewer dense layers and training for only 5 epochs compared to the CNN's 15 epochs, highlighting the efficiency of transfer learning for this task.
+Interestingly, the VGG16 model achieved superior results despite using fewer dense layers and training for only 5 epochs compared to the CNN's 15 epochs, showing that transfer learning is efficient for this task.
 
 ## Requirements
 - TensorFlow 2.x

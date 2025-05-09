@@ -7,7 +7,6 @@ import json
 import matplotlib.pyplot as plt
 
 from shared_lib.logger import logger
-from shared_lib.file_utils import ensure_directory_exists
 
 
 def compare_models(
@@ -30,7 +29,7 @@ def compare_models(
     logger.info("Comparing model performance...")
 
     # Ensure output directory exists
-    ensure_directory_exists(output_dir)
+    os.makedirs(output_dir, exist_ok=True)
 
     # Set default output paths if not provided
     if comparison_plot_path is None:

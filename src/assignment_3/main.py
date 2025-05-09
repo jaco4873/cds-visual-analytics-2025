@@ -10,12 +10,11 @@ Date: 2024-05-15
 """
 
 import os
-import argparse
 import sys
+import click
 
 
 from assignment_3.config import config
-from shared_lib.file_utils import ensure_directory_exists
 from shared_lib.logger import logger
 
 from assignment_3.services.data_service import DataService
@@ -28,9 +27,9 @@ from assignment_3.utils.model_comparison import compare_models
 
 def setup_output_dirs():
     """Set up output directories."""
-    ensure_directory_exists(config.output.base_output_dir)
-    ensure_directory_exists(config.output.cnn_output_dir)
-    ensure_directory_exists(config.output.vgg16_output_dir)
+    os.makedirs(config.output.base_output_dir, exist_ok=True)
+    os.makedirs(config.output.cnn_output_dir, exist_ok=True)
+    os.makedirs(config.output.vgg16_output_dir, exist_ok=True)
     logger.info(f"Output directories created at {config.output.base_output_dir}")
 
 
@@ -82,63 +81,27 @@ def train_vgg16_model(data_service: DataService) -> VGG16TransferLearningModel:
     return transfer_learning_service
 
 
-def parse_args():
-    """Parse command line arguments."""
-    parser = argparse.ArgumentParser(
-        description="Assignment 3 - Transfer Learning with Pretrained CNNs"
-    )
-    parser.add_argument("--data_dir", type=str, help="Path to the Lego data directory")
-    parser.add_argument("--output_dir", type=str, help="Path to save the output")
-    parser.add_argument(
-        "--cnn_only", action="store_true", help="Train only the CNN model"
-    )
-    parser.add_argument(
-        "--vgg16_only", action="store_true", help="Train only the VGG16 model"
-    )
-
-    return parser.parse_args()
-
-
-def main():
+@click.command(help="Assignment 3 - Transfer Learning with Pretrained CNNs")
+@click.option(
+    "--data-dir",
+    type=click.Path(exists=True, file_okay=False, dir_okay=True),
+    help="Path to the Lego data directory",
+)
+@click.option(
+    "--output-dir",
+    type=click.Path(file_okay=False, dir_okay=True),
+    help="Path to save the output",
+)
+@click.option("--cnn-only", is_flag=True, help="Train only the CNN model")
+@click.option("--vgg16-only", is_flag=True, help="Train only the VGG16 model")
+def main(data_dir, output_dir, cnn_only, vgg16_only):
     """Main function to run the assignment."""
-    # Parse command line arguments
-    args = parse_args()
-
     # Update config with command line arguments if provided
-    if args.data_dir:
-        config.data.data_dir = args.data_dir
+    if data_dir:
+        config.data.data_dir = data_dir
 
-    if args.output_dir:
-        config.output.base_output_dir = args.output_dir
-        config.output.cnn_output_dir = os.path.join(args.output_dir, "cnn")
-        config.output.vgg16_output_dir = os.path.join(args.output_dir, "vgg16")
-        config.output.cnn_model_path = os.path.join(
-            config.output.cnn_output_dir, "cnn_model.keras"
-        )
-        config.output.cnn_report_path = os.path.join(
-            config.output.cnn_output_dir, "classification_report.txt"
-        )
-        config.output.cnn_history_path = os.path.join(
-            config.output.cnn_output_dir, "training_history.json"
-        )
-        config.output.cnn_plot_path = os.path.join(
-            config.output.cnn_output_dir, "learning_curves.png"
-        )
-        config.output.vgg16_model_path = os.path.join(
-            config.output.vgg16_output_dir, "vgg16_model.keras"
-        )
-        config.output.vgg16_report_path = os.path.join(
-            config.output.vgg16_output_dir, "classification_report.txt"
-        )
-        config.output.vgg16_history_path = os.path.join(
-            config.output.vgg16_output_dir, "training_history.json"
-        )
-        config.output.vgg16_plot_path = os.path.join(
-            config.output.vgg16_output_dir, "learning_curves.png"
-        )
-        config.output.comparison_path = os.path.join(
-            args.output_dir, "model_comparison.txt"
-        )
+    if output_dir:
+        config.output.base_output_dir = output_dir
 
     # Create output directories
     setup_output_dirs()
@@ -155,9 +118,9 @@ def main():
         # Initialize the data service
         data_service = DataService(config)
 
-        if args.cnn_only:
+        if cnn_only:
             train_cnn_model(data_service)
-        elif args.vgg16_only:
+        elif vgg16_only:
             train_vgg16_model(data_service)
         else:
             # Train both models and compare them

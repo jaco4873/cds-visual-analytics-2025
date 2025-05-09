@@ -2,12 +2,12 @@
 Base service for model training and evaluation.
 """
 
+import os
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
 from sklearn.metrics import classification_report
 from typing import Any
-from shared_lib.file_utils import ensure_directory_exists
 from shared_lib.logger import logger
 
 
@@ -46,7 +46,7 @@ class BaseClassifierModel:
             raise ValueError(f"Unsupported model type: {model_type}")
 
         # Create output directory
-        ensure_directory_exists(self.output_dir)
+        os.makedirs(self.output_dir, exist_ok=True)
         logger.info(f"Initializing {model_type.upper()} service")
 
     def build_model(self, num_classes: int) -> None:

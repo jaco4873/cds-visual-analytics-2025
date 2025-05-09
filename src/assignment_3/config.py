@@ -4,6 +4,7 @@ Configuration settings for Assignment 3 using Pydantic BaseSettings.
 
 from pydantic_settings import BaseSettings
 from pathlib import Path
+import os
 
 # Get the project root directory
 PROJECT_ROOT = Path(__file__).parent.parent.parent
@@ -43,7 +44,7 @@ class VGG16Config(BaseSettings):
     # Training parameters
     batch_size: int = 32
     epochs: int = 5
-    
+
     # Transfer learning parameters
     include_top: bool = False
     pooling: str = "avg"
@@ -86,25 +87,53 @@ class OutputConfig(BaseSettings):
     Configuration settings for output files and directories.
     """
 
-    # Base output directory
+    # Store the base directory
     base_output_dir: str = str(PROJECT_ROOT / "src" / "assignment_3" / "output")
 
-    # CNN output directories and files
-    cnn_output_dir: str = f"{base_output_dir}/cnn"
-    cnn_model_path: str = f"{cnn_output_dir}/cnn_model.keras"
-    cnn_report_path: str = f"{cnn_output_dir}/classification_report.txt"
-    cnn_history_path: str = f"{cnn_output_dir}/training_history.json"
-    cnn_plot_path: str = f"{cnn_output_dir}/learning_curves.png"
+    # Derive output directories from base_output_dir
+    @property
+    def cnn_output_dir(self) -> str:
+        return os.path.join(self.base_output_dir, "cnn")
 
-    # VGG16 output directories and files
-    vgg16_output_dir: str = f"{base_output_dir}/vgg16"
-    vgg16_model_path: str = f"{vgg16_output_dir}/vgg16_model.keras"
-    vgg16_report_path: str = f"{vgg16_output_dir}/classification_report.txt"
-    vgg16_history_path: str = f"{vgg16_output_dir}/training_history.json"
-    vgg16_plot_path: str = f"{vgg16_output_dir}/learning_curves.png"
+    @property
+    def vgg16_output_dir(self) -> str:
+        return os.path.join(self.base_output_dir, "vgg16")
 
-    # Comparison output
-    comparison_path: str = f"{base_output_dir}/model_comparison.txt"
+    @property
+    def cnn_model_path(self) -> str:
+        return os.path.join(self.cnn_output_dir, "cnn_model.keras")
+
+    @property
+    def cnn_report_path(self) -> str:
+        return os.path.join(self.cnn_output_dir, "classification_report.txt")
+
+    @property
+    def cnn_history_path(self) -> str:
+        return os.path.join(self.cnn_output_dir, "training_history.json")
+
+    @property
+    def cnn_plot_path(self) -> str:
+        return os.path.join(self.cnn_output_dir, "learning_curves.png")
+
+    @property
+    def vgg16_model_path(self) -> str:
+        return os.path.join(self.vgg16_output_dir, "vgg16_model.keras")
+
+    @property
+    def vgg16_report_path(self) -> str:
+        return os.path.join(self.vgg16_output_dir, "classification_report.txt")
+
+    @property
+    def vgg16_history_path(self) -> str:
+        return os.path.join(self.vgg16_output_dir, "training_history.json")
+
+    @property
+    def vgg16_plot_path(self) -> str:
+        return os.path.join(self.vgg16_output_dir, "learning_curves.png")
+
+    @property
+    def comparison_path(self) -> str:
+        return os.path.join(self.base_output_dir, "model_comparison.txt")
 
 
 class Config(BaseSettings):

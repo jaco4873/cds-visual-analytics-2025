@@ -7,7 +7,6 @@ import json
 import tensorflow as tf
 from tensorflow.keras.applications.vgg16 import preprocess_input
 
-from shared_lib.file_utils import ensure_directory_exists
 from shared_lib.logger import logger
 
 
@@ -126,7 +125,7 @@ class DataService:
         Args:
             output_dir: Directory to save the class names
         """
-        ensure_directory_exists(output_dir)
+        os.makedirs(output_dir, exist_ok=True)
         class_names_path = os.path.join(output_dir, "class_names.json")
 
         with open(class_names_path, "w") as f:
