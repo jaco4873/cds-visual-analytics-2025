@@ -2,10 +2,11 @@
 Main script for running CIFAR-10 image classification.
 
 This script runs image classification on the CIFAR-10 dataset using
-configuration-based approach instead of command-line arguments.
+configuration-based approach.
 """
 
-import argparse
+import os
+import click
 from assignment_2.config import (
     CIFAR10Config,
     LogisticRegressionConfig,
@@ -15,37 +16,32 @@ from assignment_2.classifiers.logistic_regression import (
     LogisticRegressionClassifier,
 )
 from assignment_2.classifiers.neural_network import NeuralNetworkClassifier
-from shared_lib.file_utils import ensure_directory_exists
 from shared_lib.logger import logger
 
 
-def main() -> None:
-    """Run the CIFAR-10 classification pipeline based on configuration."""
+@click.command()
+@click.option(
+    "--model",
+    type=click.Choice(
+        ["logistic_regression", "neural_network", "both"], case_sensitive=False
+    ),
+    default="both",
+    help="Which model to run",
+)
+def main(model) -> None:
+    """
+    Run the CIFAR-10 classification pipeline based on configuration.
 
-    parser = argparse.ArgumentParser(description="Run CIFAR-10 image classification")
-    parser.add_argument(
-        "--model",
-        type=str,
-        choices=["logistic_regression", "neural_network", "both"],
-        default="both",
-        help="Which model to run",
-    )
-    args = parser.parse_args()
+    This script trains and evaluates classifiers on the CIFAR-10 dataset
+    using either logistic regression, neural network, or both approaches.
+    """
+    # Customize model configurations as needed or change the defaults in config:
+    lr_config = LogisticRegressionConfig()
 
-    # Cstomize model configurations as needed or change the defaults in config:
-    lr_config = LogisticRegressionConfig(
-        # max_iter=2000,
-        # solver="liblinear",
-    )
-
-    nn_config = NeuralNetworkConfig(
-        # hidden_layer_sizes=(100,),
-        # activation="relu",
-        # max_iter=100,
-    )
+    nn_config = NeuralNetworkConfig()
 
     config = CIFAR10Config(
-        run_models=args.model,  # from command line argument
+        run_models=model,  # from command line argument
         grayscale=True,
         normalize=True,
         log_level="INFO",
@@ -54,7 +50,7 @@ def main() -> None:
     )
 
     # Ensure output directory exists
-    ensure_directory_exists(config.output_dir)
+    os.makedirs(config.output_dir, exist_ok=True)
 
     logger.info("Starting CIFAR-10 classification")
     logger.info(f"Output directory: {config.output_dir}")

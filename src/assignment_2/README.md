@@ -74,6 +74,7 @@ Note: This project also has dependencies on the shared_lib module which provides
 - numpy
 - OpenCV
 - pydantic
+- Click
 
 You can install the required packages from the root of the repository with:
 
@@ -133,14 +134,23 @@ config = CIFAR10Config(
 
 ### Command Line Options
 
-The main.py script accepts the following command line arguments:
+The main.py script accepts the following command line option:
 
---model: Which model to run [logistic_regression, neural_network, both]
+```
+--model  Which model to run [logistic_regression, neural_network, both]
          Default: both
+```
 
 Example usage:
+```bash
 cd src
 uv run -m src.assignment_2.main --model neural_network
+```
+
+You can also view the help information:
+```bash
+uv run -m src.assignment_2.main --help
+```
 
 ## Implementation Details
 

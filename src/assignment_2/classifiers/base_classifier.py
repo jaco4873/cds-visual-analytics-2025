@@ -12,12 +12,11 @@ from assignment_2.utils.cifar_10 import (
     preprocess_cifar10,
     get_cifar10_class_names,
 )
-from shared_lib.model_evaluation import (
+from assignment_2.utils.model_evaluation import (
     generate_classification_report,
     plot_confusion_matrix,
     save_model_info,
 )
-from shared_lib.file_utils import ensure_directory_exists
 from shared_lib.logger import logger
 
 
@@ -42,7 +41,7 @@ class BaseClassifier(ABC):
         self.class_names = get_cifar10_class_names()
 
         # Create output directory
-        ensure_directory_exists(self.config.output_dir)
+        os.makedirs(self.config.output_dir, exist_ok=True)
 
         # Setup class-specific logger context
         logger.info(f"Initializing {self.__class__.__name__}")

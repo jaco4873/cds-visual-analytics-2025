@@ -1,8 +1,7 @@
 import numpy as np
-
 from tensorflow.keras.datasets import cifar10
 
-from shared_lib.image_utils import (
+from .image_utils import (
     convert_to_grayscale,
     normalize_images,
     flatten_images,
