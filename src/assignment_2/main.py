@@ -12,10 +12,10 @@ from assignment_2.config import (
     LogisticRegressionConfig,
     NeuralNetworkConfig,
 )
-from assignment_2.classifiers.logistic_regression import (
+from assignment_2.models.logistic_regression import (
     LogisticRegressionClassifier,
 )
-from assignment_2.classifiers.neural_network import NeuralNetworkClassifier
+from assignment_2.models.neural_network import NeuralNetworkClassifier
 from shared_lib.logger import logger
 
 

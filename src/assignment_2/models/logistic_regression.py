@@ -6,7 +6,7 @@ import time
 from sklearn.linear_model import LogisticRegression
 import numpy as np
 
-from assignment_2.classifiers.base_classifier import BaseClassifier
+from assignment_2.models.base_classifier import BaseClassifier
 from assignment_2.config import CIFAR10Config
 from shared_lib.logger import logger
 
@@ -41,18 +41,14 @@ class LogisticRegressionClassifier(BaseClassifier):
         """
         lr_config = self.config.logistic_regression
 
-        # Validate configuration
-        if lr_config.max_iter <= 0:
-            raise ValueError(f"max_iter must be positive, got {lr_config.max_iter}")
-        if lr_config.c <= 0:
-            raise ValueError(f"C must be positive, got {lr_config.c}")
-
-        logger.info("\nTraining Logistic Regression classifier...")
-        logger.info("Parameters:")
-        logger.info(f"  max_iter: {lr_config.max_iter}")
-        logger.info(f"  solver: {lr_config.solver}")
-        logger.info(f"  C: {lr_config.c}")
-        logger.info(f"  tol: {lr_config.tol}")
+        # Log training parameters
+        parameters = {
+            "max_iter": lr_config.max_iter,
+            "solver": lr_config.solver,
+            "C": lr_config.c,
+            "tol": lr_config.tol,
+        }
+        self.log_training_parameters(parameters)
 
         try:
             # Create model

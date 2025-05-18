@@ -5,32 +5,9 @@ This assignment implements classification models for the CIFAR-10 dataset using 
 1. Logistic Regression classifier
 2. Neural Network classifier (MLPClassifier)
 
-## Implementation Overview
-
-The implementation follows a modular architecture with the following components:
-
-- **Data Processing**: Loading and preprocessing the CIFAR-10 dataset (conversion to grayscale, normalization)
-- **Model Training**: Training both Logistic Regression and Neural Network classifiers
-- **Evaluation**: Generating classification reports, confusion matrices, and performance metrics
-- **Visualization**: Plotting loss curves (for Neural Network)
-- **Configuration-Based**: Uses Pydantic models for flexible configuration
-
 ## Quickstart
-If you haven't set up the environment yet, first run the setup script from the project root:
 
-```bash
-./setup.sh
-```
-
-To run the assignment directly, navigate to the src directory and execute:
-
-```bash
-cd src
-uv run -m src.assignment_2.main
-```
-
-Alternatively, use the run script from the project root for the easiest execution:
-
+The simplest way to run the assignment is using the provided run.sh script:
 ```bash
 ./run.sh
 ```
@@ -38,69 +15,15 @@ Then select option 2 from the menu.
 
 **Note:** Using the run.sh script will execute the assignment with default configurations only. For customized runs with different parameters, see the Advanced Execution Options section below.
 
-## Project Structure
-
-```
-src/assignment_2/
-├── README.md                          # This documentation file
-├── assignment_description.md          # Original assignment specifications
-├── main.py                            # Main script to run classifiers
-├── config.py                          # Configuration class for all parameters
-├── classifiers/                       # Classification model implementations
-│   ├── base_classifier.py             # Abstract base class for classifiers
-│   ├── logistic_regression.py         # Logistic Regression implementation
-│   └── neural_network.py              # Neural Network implementation
-├── utils/                             # Assignment-specific utilities
-│   └── cifar_10.py                    # Utilities for CIFAR-10 dataset handling
-└── output/                            # Primary results and output files directory
-    ├── LogisticRegressionClassifier_confusion_matrix.png
-    ├── LogisticRegressionClassifier_info.txt
-    ├── LogisticRegressionClassifier_report.txt
-    ├── NeuralNetworkClassifier_confusion_matrix.png
-    ├── NeuralNetworkClassifier_info.txt
-    ├── NeuralNetworkClassifier_loss_curve.png
-    └── NeuralNetworkClassifier_report.txt
-
-```
-
-Note: This project also has dependencies on the shared_lib module which provides common utilities and services for image processing, file handling, logging, model evaluation, and visualization.
-
-## Requirements
-
-- Python 3.12
-- TensorFlow (for loading the CIFAR-10 dataset)
-- scikit-learn
-- matplotlib
-- numpy
-- OpenCV
-- pydantic
-- Click
-
-You can install the required packages from the root of the repository with:
+### Manual Execution
+To run the assignment directly, navigate to the src directory and execute:
 
 ```bash
-uv sync
-```
-
-However, I recommend using the run script from the root of the repository for the easiest execution:
-
-```bash
-./run.sh
-```
-
-## Advanced Execution Options
-
-The manual way to run the classifiers is to use the `main.py` script:
-
-```bash
-# Navigate to assignment directory
 cd src
-uv run -m src.assignment_2.main
+uv run python -m assignment_2.main
 ```
 
-This will run both classifiers with default settings. The script uses a configuration object to control all aspects of the execution.
-
-### Customizing Configuration
+#### Customizing Configuration
 
 To customize the configuration, override default config by editing the `main.py` file:
 
@@ -132,9 +55,10 @@ config = CIFAR10Config(
 )
 ```
 
-### Command Line Options
+#### Command Line Options
 
-The main.py script accepts the following command line option:
+You can also customize the run using the command line.
+The main.py script accepts the following commands:
 
 ```
 --model  Which model to run [logistic_regression, neural_network, both]
@@ -144,15 +68,54 @@ The main.py script accepts the following command line option:
 Example usage:
 ```bash
 cd src
-uv run -m src.assignment_2.main --model neural_network
+uv run python -m src.assignment_2.main --model neural_network
 ```
 
 You can also view the help information:
 ```bash
-uv run -m src.assignment_2.main --help
+uv run python -m src.assignment_2.main --help
 ```
 
-## Implementation Details
+## Project Structure
+
+```
+src/assignment_2/
+├── README.md                          # This documentation file
+├── assignment_description.md          # Original assignment specifications
+├── main.py                            # Main script to run classifiers
+├── config.py                          # Configuration class for all parameters
+├── models/                            # Classification model implementations
+│   ├── base_classifier.py             # Abstract base class for classifiers
+│   ├── logistic_regression.py         
+│   └── neural_network.py              
+├── utils/                             # Assignment-specific utilities
+│   ├── cifar_10.py                  
+│   ├── image_utils.py                 
+│   └── model_evaluation.py                
+└── output/                            # Primary results and output files directory
+    ├── LogisticRegressionClassifier_confusion_matrix.png
+    ├── LogisticRegressionClassifier_info.txt
+    ├── LogisticRegressionClassifier_report.txt
+    ├── NeuralNetworkClassifier_confusion_matrix.png
+    ├── NeuralNetworkClassifier_info.txt
+    ├── NeuralNetworkClassifier_loss_curve.png
+    └── NeuralNetworkClassifier_report.txt
+
+```
+
+Note: This project also has dependencies on the shared_lib module which provides common utilities and services for image processing, file handling, logging, model evaluation, and visualization.
+
+
+
+## Implementation Overview
+
+The implementation follows a modular architecture with the following components:
+
+- **Data Processing**: Loading and preprocessing the CIFAR-10 dataset (conversion to grayscale, normalization)
+- **Model Training**: Training both Logistic Regression and Neural Network classifiers
+- **Evaluation**: Generating classification reports, confusion matrices, and performance metrics
+- **Visualization**: Plotting loss curves (for Neural Network)
+- **Configuration-Based**: Uses Pydantic models for flexible configuration
 
 ### Configuration System
 
@@ -223,6 +186,18 @@ The experiments on the CIFAR-10 dataset yielded interesting findings:
 - Early stopping triggered after 48 iterations
 
 Looking at both models, it's clear the neural network does a much better job with these complex images, even when converted to grayscale. It's interesting that cats were consistently the hardest class for both models to identify - probably because cats have more varied poses and appearances than other classes. I noticed vehicles (cars, trucks, ships) were the easiest to classify across both models, which makes sense since they have more consistent shapes and features. This pattern suggests that object distinctiveness matters more than the actual complexity of the object when it comes to classification performance.
+
+## Requirements
+
+- Python 3.12
+- TensorFlow (for loading the CIFAR-10 dataset)
+- scikit-learn
+- matplotlib
+- numpy
+- OpenCV
+- pydantic
+- Click
+
 
 ## References
 

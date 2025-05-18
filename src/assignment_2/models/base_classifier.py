@@ -4,6 +4,7 @@ Abstract base class for CIFAR-10 image classifiers.
 
 import os
 from abc import ABC, abstractmethod
+from typing import Any
 import numpy as np
 
 from assignment_2.config import CIFAR10Config
@@ -42,9 +43,6 @@ class BaseClassifier(ABC):
 
         # Create output directory
         os.makedirs(self.config.output_dir, exist_ok=True)
-
-        # Setup class-specific logger context
-        logger.info(f"Initializing {self.__class__.__name__}")
 
     def load_and_preprocess_data(
         self,
@@ -104,6 +102,17 @@ class BaseClassifier(ABC):
             y_train: Training labels
         """
         pass
+
+    def log_training_parameters(self, parameters: dict[str, Any]) -> None:
+        """
+        Log training parameters in a consistent format.
+
+        Args:
+            parameters: Dictionary of parameter names and values
+        """
+        logger.info("\nTraining parameters:")
+        for name, value in parameters.items():
+            logger.info(f"  {name}: {value}")
 
     def evaluate(self, X_test: np.ndarray, y_test: np.ndarray) -> float:
         """
