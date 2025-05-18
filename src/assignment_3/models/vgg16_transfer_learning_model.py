@@ -59,8 +59,8 @@ class VGG16TransferLearningModel(BaseClassifierModel):
             for layer in base_model.layers:
                 layer.trainable = False
 
-        # Add new classifier layers 
-        features = base_model.output 
+        # Add new classifier layers
+        features = base_model.output
         x = features
 
         # Add all Dense layers from configuration
@@ -84,7 +84,7 @@ class VGG16TransferLearningModel(BaseClassifierModel):
         # Compile the model
         model.compile(
             optimizer=optimizer,
-            loss="categorical_crossentropy",
+            loss="sparse_categorical_crossentropy",
             metrics=["accuracy"],
         )
 
