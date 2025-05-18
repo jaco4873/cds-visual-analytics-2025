@@ -11,6 +11,7 @@ from collections import defaultdict
 import pandas as pd
 from shared_lib.logger import logger
 from assignment_4.config import Config
+from assignment_4.services.data_service import DataService
 
 
 class FaceDetectionService:
@@ -55,18 +56,15 @@ class FaceDetectionService:
         try:
             # Detect faces
             boxes, _ = self.mtcnn.detect(image)
-
-            # Count faces
-            if boxes is None:
-                return 0
-
-            return len(boxes)
-
+            return len(boxes) if boxes is not None else 0
+        except RuntimeError as e:
+            logger.error(f"Model error during detection: {e}")
+            return 0
         except Exception as e:
-            logger.error(f"Error detecting faces: {e}")
+            logger.error(f"Unexpected error in face detection: {e}")
             return 0
 
-    def process_newspaper(self, newspaper: str, data_service):
+    def process_newspaper(self, newspaper: str, data_service: DataService):
         """
         Process all images for a newspaper, detect faces and group by decade.
 

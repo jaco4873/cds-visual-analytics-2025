@@ -17,7 +17,11 @@ class FaceDetectionConfig(BaseSettings):
     # MTCNN model parameters
     keep_all: bool = True  # Keep all detected faces
     min_face_size: int = 20  # Minimum face size to detect
-    thresholds: list[float] = [0.6, 0.7, 0.7]  # Detection thresholds for the 3 stages
+    thresholds: list[float] = [
+        0.7,
+        0.9,
+        0.9,
+    ]  # Detection thresholds for the 3 stages
     factor: float = 0.709  # Scale factor
 
 
@@ -31,13 +35,6 @@ class DataConfig(BaseSettings):
 
     # Newspapers to analyze
     newspapers: list[str] = ["GDL", "JDG", "IMP"]
-
-    # The year range for each newspaper
-    newspaper_periods: dict = {
-        "GDL": (1804, 1991),
-        "JDG": (1826, 1994),
-        "IMP": (1881, 2017),
-    }
 
 
 class OutputConfig(BaseSettings):

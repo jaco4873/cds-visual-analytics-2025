@@ -93,8 +93,19 @@ def process_newspapers(newspaper=None):
         logger.info("Processing completed successfully!")
         return 0
 
+    except ValueError as e:
+        # Configuration or input errors
+        logger.error(f"Invalid input or configuration: {e}")
+        return 1
+    except OSError as e:
+        # File system errors
+        logger.error(f"File system error (check permissions): {e}")
+        return 1
+    except KeyboardInterrupt:
+        logger.info("Process interrupted by user")
+        return 130
     except Exception as e:
-        logger.error(f"Error during processing: {e}")
+        logger.error(f"Unhandled error: {e}")
         return 1
 
 
