@@ -7,10 +7,33 @@ This assignment implements two approaches for classifying Lego brick images:
 
 The goal is to compare these two approaches and determine whether transfer learning improves performance for this specific image classification task.
 
-## Dataset & Processing
-- Source and format: The dataset consists of images of various Lego bricks arranged in folders named after the brick type. The data should be placed in the `data/lego` directory. We use thee data from the "Cropped Images" folder, which contains images with backgrounds removed.
-- Core preprocessing steps: Images are resized to 224×224 pixels with 3 color channels, Batches of 32 images are processed at a time, Data is split with 20% for validation during training, Image normalization scales pixel values to [0-1]
-- Data augmentation (horizontal flipping only)
+## Quickstart
+
+The simplest way to run the assignment is using the provided run.sh script:
+
+```bash
+./run.sh
+```
+Then select option 3 from the menu.
+
+### Manual Execution
+You can also run the code directly:
+```bash
+# Navigate to src from the project root
+cd src
+
+# Run as module
+uv run python -m assignment_3.main 
+
+# With custom arguments
+uv run python -m assignment_3.main --data-dir /path/to/lego/data --output-dir /path/to/output
+```
+
+#### Command Line Arguments
+- `--data-dir`: Path to the Lego data directory (must exist and be a directory)
+- `--output-dir`: Path to save the output (default: ./src/assignment_3/output)
+- `--cnn-only`: Train only the CNN model
+- `--vgg16-only`: Train only the VGG16 model
 
 ## Project Structure
 ```
@@ -41,6 +64,10 @@ src/assignment_3/
     └── model_comparison.txt     # Textual comparison of models
 ```
 
+## Dataset
+- Source and format: The dataset consists of images of various Lego bricks arranged in folders named after the brick type. 
+- The data should be placed in the `data/lego` directory. 
+- We use the data from the "Cropped Images" folder, which contains images with backgrounds removed.
 
 ## Implementation Details
 
@@ -103,33 +130,6 @@ Our configuration provides flexibility through the `trainable_layers` parameter,
 - Learning curves show training and validation accuracy/loss over epochs
 - Comparative analysis examines whether transfer learning improves performance
 
-## How to Run
-
-### Using the run.sh Script
-The simplest way to run the assignment is using the provided run.sh script:
-```bash
-./run.sh
-```
-Then select option 3 from the menu.
-
-### Manual Execution
-You can also run the code directly:
-```bash
-# Navigate to src from the project root
-cd src
-
-# Run as module
-uv run python -m assignment_3.main 
-
-# With custom arguments
-uv run python -m assignment_3.main --data-dir /path/to/lego/data --output-dir /path/to/output
-```
-
-### Command Line Arguments
-- `--data-dir`: Path to the Lego data directory (must exist and be a directory)
-- `--output-dir`: Path to save the output (default: ./src/assignment_3/output)
-- `--cnn-only`: Train only the CNN model
-- `--vgg16-only`: Train only the VGG16 model
 
 ## Results - NEEDS UPDATE
 The experiment yielded striking differences between our two approaches. Here's what we found:
