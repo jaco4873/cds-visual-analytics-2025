@@ -10,36 +10,8 @@ This project analyzes the presence of human faces in historical Swiss newspapers
 
 The analysis uses a pre-trained CNN model (MTCNN) to detect faces in newspaper page images, groups the results by decade, and visualizes trends in the prevalence of human faces in print media over approximately 200 years.
 
-## Project Structure
 
-```
-assignment_4/
-├── config.py                  # Configuration settings 
-├── main.py                    # Main script to run the analysis
-├── services/                  # Service modules
-│   ├── data_service.py        # Data loading and processing
-│   └── face_detection_service.py  # Face detection with MTCNN
-├── utils/                     # Utility modules
-│   └── visualization.py       # Visualization utilities
-└── output/                    # Output directory
-    ├── results/               # CSV results
-    └── plots/                 # Visualization plots
-```
-
-## Getting Started
-
-Clone the repository and install the required packages:
-
-```bash
-# Clone the repository
-git clone <repository-url>
-cd <repository-directory>
-
-# Install dependencies
-uv sync
-```
-
-## Usage
+## Quickstart
 
 Run the main script to process the newspaper images and generate the analysis:
 
@@ -49,6 +21,7 @@ The simplest way to run the assignment is using the provided run.sh script:
 ```
 Then select option 4 from the menu.
 
+### Manual Execution
 Alternatively, you can run assignment 4 as a module as below:
 
 ```bash
@@ -65,11 +38,27 @@ uv run -m assignment_4.main --newspaper GDL
 uv run -m assignment_4.main --data-dir /path/to/data --output-dir /path/to/output
 ```
 
-### Command Line Options
+#### Command Line Options
 
 - `--data-dir`: Path to the newspaper images directory (must exist and be a directory)
 - `--output-dir`: Path to save the output
 - `--newspaper`: Process only a specific newspaper (choices: GDL, JDG, IMP)
+
+## Project Structure
+
+```
+assignment_4/
+├── config.py                  # Configuration settings 
+├── main.py                    # Main script to run the analysis
+├── services/                  # Service modules
+│   ├── data_service.py        # Data loading and processing
+│   └── face_detection_service.py  # Face detection with MTCNN
+├── utils/                     # Utility modules
+│   └── visualization.py       # Visualization utilities
+└── output/                    # Output directory
+    ├── results/               # CSV results
+    └── plots/                 # Visualization plots
+```
 
 ## Data
 

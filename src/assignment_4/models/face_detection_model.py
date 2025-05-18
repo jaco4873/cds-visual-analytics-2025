@@ -64,7 +64,9 @@ class FaceDetectionService:
             logger.error(f"Unexpected error in face detection: {e}")
             return 0
 
-    def process_newspaper(self, newspaper: str, data_service: DataService):
+    def process_newspaper(
+        self, newspaper: str, data_service: DataService
+    ) -> tuple[dict, dict, pd.DataFrame]:
         """
         Process all images for a newspaper, detect faces and group by decade.
 
@@ -126,7 +128,7 @@ class FaceDetectionService:
 
         return faces_by_decade, files_by_decade, results_df
 
-    def save_results(self, results_df: pd.DataFrame, newspaper: str):
+    def save_results(self, results_df: pd.DataFrame, newspaper: str) -> None:
         """
         Save results to CSV file.
 

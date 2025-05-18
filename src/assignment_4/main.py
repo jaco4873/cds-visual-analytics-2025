@@ -25,7 +25,7 @@ from assignment_4.visualization.visualization import (
 from shared_lib.logger import logger
 
 
-def setup_output_dirs():
+def setup_output_dirs() -> None:
     """Set up output directories."""
     os.makedirs(config.output.base_output_dir, exist_ok=True)
     os.makedirs(config.output.results_dir, exist_ok=True)
@@ -33,7 +33,7 @@ def setup_output_dirs():
     logger.info(f"Output directories created at {config.output.base_output_dir}")
 
 
-def process_newspapers(newspaper=None):
+def process_newspapers(newspaper: str | None = None) -> int:
     """
     Process newspaper images to detect faces and analyze results.
 
@@ -125,7 +125,7 @@ def process_newspapers(newspaper=None):
     type=click.Choice(["GDL", "JDG", "IMP"], case_sensitive=True),
     help="Process only a specific newspaper",
 )
-def main(data_dir, output_dir, newspaper):
+def main(data_dir: str, output_dir: str, newspaper: str) -> int:
     """
     Detect faces in historical newspapers and analyze trends over time.
 

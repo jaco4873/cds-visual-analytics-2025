@@ -10,7 +10,9 @@ from pathlib import Path
 from shared_lib.logger import logger
 
 
-def create_newspaper_plot(results_df: pd.DataFrame, newspaper: str, output_dir: str):
+def create_newspaper_plot(
+    results_df: pd.DataFrame, newspaper: str, output_dir: str
+) -> None:
     """
     Create a plot showing the percentage of pages with faces by decade for a single newspaper.
 
@@ -60,7 +62,7 @@ def create_newspaper_plot(results_df: pd.DataFrame, newspaper: str, output_dir: 
 
 def create_comparison_plot(
     newspaper_results: list[pd.DataFrame], newspapers: list[str], output_dir: str
-):
+) -> None:
     """
     Create a comparison plot showing percentage of pages with faces across all newspapers.
 
@@ -120,7 +122,9 @@ def create_comparison_plot(
     logger.info(f"Comparison plot saved to {output_path}")
 
 
-def create_combined_results_csv(newspaper_results: list[pd.DataFrame], output_dir: str):
+def create_combined_results_csv(
+    newspaper_results: list[pd.DataFrame], output_dir: str
+) -> pd.DataFrame:
     """
     Create a combined CSV file with results from all newspapers.
 
@@ -144,7 +148,7 @@ def create_combined_results_csv(newspaper_results: list[pd.DataFrame], output_di
     return combined_df
 
 
-def create_summary_statistics(combined_df: pd.DataFrame, output_dir: str):
+def create_summary_statistics(combined_df: pd.DataFrame, output_dir: str) -> pd.DataFrame:
     """
     Create summary statistics for the detected faces.
 
