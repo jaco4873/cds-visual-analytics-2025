@@ -12,6 +12,8 @@ import os
 from assignment_1.services.embedding_search_service import EmbeddingSearchService
 from assignment_1.config import embedding_config
 from shared_lib.logger import logger
+from assignment_1.utils.path_utils import get_dataset_path
+from assignment_1.utils.result_utils import save_results_to_csv
 
 
 def find_similar_images_with_embeddings(
@@ -22,7 +24,7 @@ def find_similar_images_with_embeddings(
     input_shape: tuple[int, int, int] = (224, 224, 3),
     pooling: str = "avg",
     include_top: bool = False,
-):
+) -> list[tuple[str, float]]:
     """
     Find images similar to a target image based on VGG16 embeddings.
 
@@ -63,26 +65,22 @@ def find_similar_images_with_embeddings(
 
     # Save results to CSV
     logger.info(f"Saving results to {output_path}...")
-    search_service.save_results_to_csv(results=similar_images, output_path=output_path)
+    save_results_to_csv(
+        results=similar_images, output_path=output_path, metric_name="Similarity"
+    )
 
     logger.info("Embedding image search completed successfully!")
     return similar_images
 
 
-def main():
+def main() -> None:
     """
     Main function to execute the embedding-based image search workflow.
 
     This function defines the parameters for the image search and calls
     the find_similar_images_with_embeddings function.
     """
-
-    project_root = os.path.dirname(
-        os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    )
-
-    dataset_path = os.path.join(project_root, embedding_config.dataset_folder)
-    target_image_path = os.path.join(dataset_path, embedding_config.target_image)
+    dataset_path, target_image_path = get_dataset_path(embedding_config)
 
     try:
         # Find similar images using embeddings

@@ -13,6 +13,8 @@ import cv2
 from assignment_1.services.histogram_search_service import HistogramSearchService
 from shared_lib.logger import logger
 from assignment_1.config import histogram_config
+from assignment_1.utils.path_utils import get_dataset_path
+from assignment_1.utils.result_utils import save_results_to_csv
 
 
 def find_similar_images_with_histograms(
@@ -22,7 +24,7 @@ def find_similar_images_with_histograms(
     num_results: int = 5,
     histogram_bins: tuple[int, int, int] = (8, 8, 8),
     color_space: str = "BGR",
-):
+) -> list[tuple[str, float]]:
     """
     Find images similar to a target image based on color histograms.
 
@@ -51,7 +53,7 @@ def find_similar_images_with_histograms(
 
     # Extract histograms for all images in the dataset
     logger.info("Extracting histograms for all images...")
-    search_service.extract_histograms()
+    search_service.extract_all_histograms()
 
     # Find similar images
     logger.info(f"Finding {num_results} images similar to {target_image_path}...")
@@ -62,13 +64,15 @@ def find_similar_images_with_histograms(
 
     # Save results to CSV
     logger.info(f"Saving results to {output_path}...")
-    search_service.save_results_to_csv(results=similar_images, output_path=output_path)
+    save_results_to_csv(
+        results=similar_images, output_path=output_path, metric_name="Distance"
+    )
 
     logger.info("Histogram-based image search completed successfully!")
     return similar_images
 
 
-def main():
+def main() -> None:
     """
     Main function to execute the histogram-based image search workflow.
 
@@ -76,12 +80,7 @@ def main():
     the find_similar_images_with_histograms function.
     """
 
-    project_root = os.path.dirname(
-        os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    )
-
-    dataset_path = os.path.join(project_root, histogram_config.dataset_folder)
-    target_image_path = os.path.join(dataset_path, histogram_config.target_image)
+    dataset_path, target_image_path = get_dataset_path(histogram_config)
 
     try:
         # Find similar images using histograms

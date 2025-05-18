@@ -4,13 +4,13 @@ Service for image search functionality using deep learning embeddings.
 
 import os
 import numpy as np
-import pandas as pd
-from sklearn.metrics.pairwise import cosine_similarity
+from numpy import typing as npt
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
 from tensorflow.keras.applications.vgg16 import VGG16, preprocess_input
-
-from assignment_1.utils.image_utils import get_image_files, get_filename
+from sklearn.metrics.pairwise import cosine_similarity
+from assignment_1.utils.image_utils import get_image_files
 from shared_lib.logger import logger
+from assignment_1.utils.result_utils import save_results_to_csv as save_results
 
 
 class EmbeddingSearchService:
@@ -39,8 +39,7 @@ class EmbeddingSearchService:
             ValueError: If pooling is not supported.
         """
         # Input validation
-        if not os.path.exists(image_directory):
-            raise ValueError(f"Image directory does not exist: {image_directory}")
+        os.makedirs(image_directory, exist_ok=True)
 
         if pooling not in ["avg", "max", None]:
             raise ValueError(
@@ -50,7 +49,7 @@ class EmbeddingSearchService:
         # Initialize the embedding search service
         self.image_directory = image_directory
         self.input_shape = input_shape
-        self.embeddings: dict[str, np.ndarray] = {}
+        self.embeddings: dict[str, npt.NDArray[np.float32]] = {}
 
         # Load the VGG16 model
         logger.info("Loading VGG16 model...")
@@ -70,7 +69,7 @@ class EmbeddingSearchService:
             logger.error(f"Error loading image files from {image_directory}: {e}")
             raise
 
-    def extract_features(self, image_path: str) -> np.ndarray:
+    def extract_features(self, image_path: str) -> npt.NDArray[np.float32]:
         """
         Extract features from an image using the VGG16 model.
 
@@ -78,10 +77,11 @@ class EmbeddingSearchService:
             image_path: Path to the image.
 
         Returns:
-            Feature vector for the image.
+            Feature vector for the image as a numpy array of float32.
 
         Raises:
             FileNotFoundError: If the image does not exist.
+            ValueError: If the image cannot be processed.
         """
         if not os.path.exists(image_path):
             raise FileNotFoundError(f"Image not found: {image_path}")
@@ -108,16 +108,19 @@ class EmbeddingSearchService:
             logger.error(f"Error extracting features from {image_path}: {e}")
             raise
 
-    def extract_all_embeddings(self) -> None:
+    def extract_all_embeddings(self) -> "EmbeddingSearchService":
         """
         Extract embeddings for all images in the dataset.
+
+        Returns:
+            self: The service instance for method chaining.
 
         Raises:
             RuntimeError: If no images were found to process.
         """
         if not self.image_files:
             logger.warning("No images found to extract embeddings from")
-            return
+            return self
 
         success_count = 0
         error_count = 0
@@ -144,6 +147,8 @@ class EmbeddingSearchService:
 
         if success_count == 0 and error_count > 0:
             raise RuntimeError("Failed to extract any embeddings from the dataset")
+
+        return self
 
     def find_similar_images(
         self, target_image_path: str, num_results: int = 5
@@ -216,31 +221,14 @@ class EmbeddingSearchService:
         Save the search results to a CSV file.
 
         Args:
-            results: List of tuples containing (image_path, similarity).
+            results: List of tuples containing (image_path, metric_value).
             output_path: Path to save the CSV file.
 
         Raises:
             ValueError: If results is empty.
             IOError: If the CSV file cannot be written.
         """
-        # Input validation
-        if not results:
-            raise ValueError("Cannot save empty results")
+        # Use the appropriate metric name for each service
+        metric_name = "Distance" if hasattr(self, "comparison_method") else "Similarity"
 
-        try:
-            os.makedirs(os.path.dirname(output_path), exist_ok=True)
-
-            # Create a DataFrame from the results
-            df = pd.DataFrame(results, columns=["Filename", "Similarity"])
-
-            # Extract the filename from the full path
-            df["Filename"] = df["Filename"].apply(get_filename)
-
-            # Save to CSV
-            df.to_csv(output_path, index=False)
-
-            logger.info(f"Results saved to {output_path}")
-
-        except Exception as e:
-            logger.error(f"Error saving results to {output_path}: {e}")
-            raise IOError(f"Failed to save results to CSV: {e}")
+        save_results(results, output_path, metric_name)

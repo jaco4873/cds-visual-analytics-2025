@@ -14,6 +14,7 @@ from shared_lib.logger import logger
 from assignment_1.config import histogram_config, embedding_config
 from assignment_1.scripts.histogram_search import find_similar_images_with_histograms
 from assignment_1.scripts.embedding_search import find_similar_images_with_embeddings
+from assignment_1.utils.path_utils import resolve_path
 
 
 @click.command(help="Image Search with Histograms and Embeddings")
@@ -30,16 +31,8 @@ def main(method):
     This tool finds similar images to a target image using either color histograms,
     deep learning embeddings, or both approaches.
     """
-    # Get paths
-    project_root = os.path.dirname(
-        os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    )
 
-    # Common dataset path
-    dataset_folder = (
-        histogram_config.dataset_folder
-    )  # Both configs have the same default
-    dataset_path = os.path.join(project_root, dataset_folder)
+    dataset_path = resolve_path(histogram_config.dataset_folder)
 
     try:
         # Run histogram-based search if requested

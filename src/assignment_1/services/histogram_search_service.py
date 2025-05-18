@@ -4,15 +4,16 @@ Service for histogram-based image search functionality.
 
 import os
 import cv2
-import pandas as pd
+import numpy as np
+from numpy import typing as npt
 from assignment_1.utils.image_utils import (
     load_image,
     extract_color_histogram,
     compare_histograms,
     get_image_files,
-    get_filename,
 )
 from shared_lib.logger import logger
+from assignment_1.utils.result_utils import save_results_to_csv as save_results
 
 
 class HistogramSearchService:
@@ -55,10 +56,10 @@ class HistogramSearchService:
 
         # Initialize the histogram search service
         self.image_directory = image_directory
-        self.histogram_bins = list(histogram_bins)
+        self.histogram_bins = histogram_bins
         self.color_space = color_space
         self.comparison_method = comparison_method
-        self.histograms = {}
+        self.histograms: dict[str, npt.NDArray[np.float32]] = {}
 
         # Get all image files in the directory and fail if none are found
         try:
@@ -68,16 +69,19 @@ class HistogramSearchService:
             logger.error(f"Error loading image files from {image_directory}: {e}")
             raise
 
-    def extract_histograms(self) -> None:
+    def extract_all_histograms(self) -> "HistogramSearchService":
         """
         Extract histograms for all images in the dataset.
+
+        Returns:
+            self: The service instance for method chaining.
 
         Raises:
             RuntimeError: If no images were found to process.
         """
         if not self.image_files:
             logger.warning("No images found to extract histograms from")
-            return
+            return self
 
         success_count = 0
         error_count = 0
@@ -100,6 +104,8 @@ class HistogramSearchService:
 
         if success_count == 0 and error_count > 0:
             raise RuntimeError("Failed to extract any histograms from the dataset")
+
+        return self
 
     def find_similar_images(
         self, target_image_path: str, num_results: int = 5
@@ -137,7 +143,7 @@ class HistogramSearchService:
             # Extract histograms if they haven't been extracted yet
             if not self.histograms:
                 logger.info("No histograms found, extracting now...")
-                self.extract_histograms()
+                self.extract_all_histograms()
 
             if not self.histograms:
                 raise RuntimeError("Failed to extract histograms from the dataset")
@@ -186,24 +192,5 @@ class HistogramSearchService:
             ValueError: If results is empty.
             IOError: If the CSV file cannot be written.
         """
-        # Input validation
-        if not results:
-            raise ValueError("Cannot save empty results")
-
-        try:
-            os.makedirs(os.path.dirname(output_path), exist_ok=True)
-
-            # Create a DataFrame from the results
-            df = pd.DataFrame(results, columns=["Filename", "Distance"])
-
-            # Extract the filename from the full path
-            df["Filename"] = df["Filename"].apply(get_filename)
-
-            # Save to CSV
-            df.to_csv(output_path, index=False)
-
-            logger.info(f"Results saved to {output_path}")
-
-        except Exception as e:
-            logger.error(f"Error saving results to {output_path}: {e}")
-            raise IOError(f"Failed to save results to CSV: {e}")
+        # Use "Distance" as the metric name for histogram-based results
+        save_results(results, output_path, metric_name="Distance")

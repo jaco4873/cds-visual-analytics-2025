@@ -10,23 +10,17 @@ The project uses the 17 Category Flower Dataset from the Visual Geometry Group a
 
 **Note**: The dataset will be automatically downloaded when running the assignment if it's not already present. You don't need to manually download and extract the dataset unless you want to prepare it beforehand.
 
-## Requirements
-- Python 3.12+
-- OpenCV
-- TensorFlow
-- NumPy
-- Scikit-learn
-- Pandas
-- Matplotlib
-- Click
-
 ## Quickstart
-If you haven't set up the environment yet, first run the setup script from the project root:
 
+The simplest way to run the assignment is using the provided run.sh script:
 ```bash
-./setup.sh
+./run.sh
 ```
+Then select option 1 from the menu.
 
+### Manual Execution
+
+```
 To run both search algorithms, navigate to the src directory and then execute the main module:
 
 ```bash
@@ -181,4 +175,14 @@ Using VGG16 embeddings and cosine similarity (higher values indicate more simila
 
 What's particularly interesting is that manual inspection of these results revealed all the similar images are yellow daffodils. Unlike the histogram method which simply matched color patterns, the CNN approach recognized the specific flower species in the image. This nicely illustrates how convolutional neural networks can capture semantic content and object categories rather than just low-level visual features.
 
-These results demonstrate how different feature extraction methods can yield different notions of similarity. The histogram-based approach focuses more on color distribution, while the embedding-based approach captures higher-level semantic features, resulting in completely different sets of similar images.
+These results show how different feature extraction methods can yield different notions of similarity. The histogram-based approach focuses more on color distribution, while the embedding-based approach captures higher-level semantic features, resulting in completely different sets of similar images.
+
+## Requirements
+- Python 3.12+
+- OpenCV
+- TensorFlow
+- NumPy
+- Scikit-learn
+- Pandas
+- Matplotlib
+- Click
