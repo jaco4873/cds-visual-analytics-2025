@@ -3,20 +3,22 @@ Base service for model training and evaluation.
 """
 
 import os
-import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
-from sklearn.metrics import classification_report
 from typing import Any
 from shared_lib.logger import logger
+import json
+import time
+from abc import ABC, abstractmethod
+from assignment_3.config import Config
 
 
-class BaseClassifierModel:
+class BaseClassifierModel(ABC):
     """
     Base service for model training and evaluation.
     """
 
-    def __init__(self, config, model_type="base"):
+    def __init__(self, config: Config, model_type="base"):
         """
         Initialize the model service.
 
@@ -29,26 +31,16 @@ class BaseClassifierModel:
         self.model = None
         self.history = None
 
-        # Set output paths based on model type
-        if model_type == "cnn":
-            self.output_dir = self.config.output.cnn_output_dir
-            self.model_path = self.config.output.cnn_model_path
-            self.report_path = self.config.output.cnn_report_path
-            self.history_path = self.config.output.cnn_history_path
-            self.plot_path = self.config.output.cnn_plot_path
-        elif model_type == "vgg16":
-            self.output_dir = self.config.output.vgg16_output_dir
-            self.model_path = self.config.output.vgg16_model_path
-            self.report_path = self.config.output.vgg16_report_path
-            self.history_path = self.config.output.vgg16_history_path
-            self.plot_path = self.config.output.vgg16_plot_path
-        else:
-            raise ValueError(f"Unsupported model type: {model_type}")
+        # Get all paths for this model type
+        paths = self.config.get_model_paths(model_type)
+        self.__dict__.update(paths) 
 
-        # Create output directory
-        os.makedirs(self.output_dir, exist_ok=True)
+        # Ensure directories exist
+        self.config.ensure_model_directories(model_type)
+
         logger.info(f"Initializing {model_type.upper()} service")
 
+    @abstractmethod
     def build_model(self, num_classes: int) -> None:
         """
         Build a model for image classification. To be implemented by subclasses.
@@ -56,9 +48,11 @@ class BaseClassifierModel:
         Args:
             num_classes: Number of classes to predict
         """
-        raise NotImplementedError("Subclasses must implement this method")
+        pass
 
-    def train(self) -> dict[str, Any]:
+    def train(
+        self, train_dataset: tf.data.Dataset, validation_dataset: tf.data.Dataset
+    ) -> dict[str, Any]:
         """
         Train the model.
 
@@ -72,57 +66,68 @@ class BaseClassifierModel:
         if self.model is None:
             raise ValueError("Model not built. Call build_model() first.")
 
-        logger.info(f"Training {self.model_type.upper()} model...")
+        logger.info(f"Training {self.model_type} model...")
+        start_time = time.time()
 
-        # Each subclass should implement the specific training parameters
+        # Get epochs from the appropriate config section based on model type
+        epochs = (
+            self.config.vgg16.epochs
+            if self.model_type == "vgg16"
+            else self.config.cnn.epochs
+        )
+
+        # Train the model
+        history = self.model.fit(
+            train_dataset,
+            validation_data=validation_dataset,
+            epochs=epochs,
+        )
+
+        training_time = time.time() - start_time
+        logger.info(f"Model training completed in {training_time:.2f} seconds")
+
+        # Store the history
+        self.history = history.history
+
+        # Save the training history
+        with open(self.history_path, "w") as f:
+            json.dump(self.history, f)
+        logger.info(f"Training history saved to {self.history_path}")
+
         return self.history
 
-    def evaluate(
-        self, test_dataset: tf.data.Dataset, class_names: list[str]
-    ) -> tuple[float, float]:
+    def evaluate(self, test_dataset: tf.data.Dataset) -> dict:
         """
-        Evaluate the model.
+        Evaluate the model on a separate test dataset.
 
         Args:
-            test_dataset: Test dataset
-            class_names: List of class names
+            test_dataset: Test dataset (separate from validation dataset)
 
         Returns:
-            Tuple of (loss, accuracy)
+            Dictionary with evaluation metrics
         """
         if self.model is None:
             raise ValueError("Model not built. Call build_model() first.")
 
-        logger.info(f"Evaluating {self.model_type.upper()} model...")
+        logger.info(f"Evaluating {self.model_type} model on test dataset...")
 
-        # Evaluate the model
-        loss, accuracy = self.model.evaluate(test_dataset)
-        logger.info(f"Test loss: {loss:.4f}")
-        logger.info(f"Test accuracy: {accuracy:.4f}")
+        # Evaluate the model on the test dataset
+        test_results = self.model.evaluate(test_dataset)
 
-        # Generate predictions
-        predictions = self.model.predict(test_dataset)
-        y_pred = np.argmax(predictions, axis=1)
+        # Store results in a dictionary
+        metrics = dict(zip(self.model.metrics_names, test_results))
 
-        # Get true labels
-        y_true = []
-        for _, labels in test_dataset:
-            y_true.extend(np.argmax(labels, axis=1))
-            if len(y_true) >= len(y_pred):
-                break
-        y_true = y_true[: len(y_pred)]
+        logger.info(f"Test metrics: {metrics}")
 
-        # Generate classification report
-        report = classification_report(
-            y_true, y_pred, target_names=class_names, digits=4
+        # Save test metrics to a file
+        test_metrics_path = os.path.join(
+            os.path.dirname(self.report_path), "test_metrics.json"
         )
+        with open(test_metrics_path, "w") as f:
+            json.dump(metrics, f)
+        logger.info(f"Test metrics saved to {test_metrics_path}")
 
-        # Save the classification report
-        with open(self.report_path, "w") as f:
-            f.write(report)
-        logger.info(f"Classification report saved to {self.report_path}")
-
-        return loss, accuracy
+        return metrics
 
     def plot_learning_curves(self) -> None:
         """

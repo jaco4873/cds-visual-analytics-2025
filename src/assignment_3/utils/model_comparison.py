@@ -13,41 +13,37 @@ def compare_models(
     cnn_history_path: str,
     vgg16_history_path: str,
     output_dir: str,
-    comparison_plot_path: str = None,
-    comparison_text_path: str = None,
 ) -> None:
     """
     Compare performance of CNN and VGG16 models based on their training histories.
-
-    Args:
-        cnn_history_path: Path to CNN training history JSON file
-        vgg16_history_path: Path to VGG16 training history JSON file
-        output_dir: Directory to save the comparison outputs
-        comparison_plot_path: Path to save the comparison plot (optional)
-        comparison_text_path: Path to save the comparison text (optional)
     """
-    logger.info("Comparing model performance...")
+    # Load histories
+    cnn_history = _load_history(cnn_history_path)
+    vgg16_history = _load_history(vgg16_history_path)
 
-    # Ensure output directory exists
-    os.makedirs(output_dir, exist_ok=True)
+    # Generate visualization
+    _plot_comparison(
+        cnn_history, vgg16_history, os.path.join(output_dir, "model_comparison.png")
+    )
 
-    # Set default output paths if not provided
-    if comparison_plot_path is None:
-        comparison_plot_path = os.path.join(output_dir, "model_comparison.png")
-    if comparison_text_path is None:
-        comparison_text_path = os.path.join(output_dir, "model_comparison.txt")
+    # Generate text comparison
+    _generate_comparison_text(
+        cnn_history, vgg16_history, os.path.join(output_dir, "model_comparison.txt")
+    )
 
-    # Load training histories
+
+def _load_history(path: str) -> dict:
+    """Load model history from JSON file."""
     try:
-        with open(cnn_history_path, "r") as f:
-            cnn_history = json.load(f)
-
-        with open(vgg16_history_path, "r") as f:
-            vgg16_history = json.load(f)
+        with open(path, "r") as f:
+            return json.load(f)
     except Exception as e:
-        logger.error(f"Error loading model histories: {e}")
+        logger.error(f"Error loading history from {path}: {e}")
         raise
 
+
+def _plot_comparison(cnn_history: dict, vgg16_history: dict, output_path: str) -> None:
+    """Generate comparison plots."""
     # Set up the figure
     plt.figure(figsize=(12, 10))
 
@@ -90,11 +86,16 @@ def compare_models(
     plt.tight_layout()
 
     # Save the figure
-    plt.savefig(comparison_plot_path)
+    plt.savefig(output_path)
     plt.close()
 
-    logger.info(f"Model comparison plot saved to {comparison_plot_path}")
+    logger.info(f"Model comparison plot saved to {output_path}")
 
+
+def _generate_comparison_text(
+    cnn_history: dict, vgg16_history: dict, output_path: str
+) -> None:
+    """Generate text comparison."""
     # Get final validation accuracies for comparison
     cnn_final_val_acc = cnn_history["val_accuracy"][-1]
     vgg16_final_val_acc = vgg16_history["val_accuracy"][-1]
@@ -117,7 +118,7 @@ Conclusion:
 """
 
     # Save the comparison text
-    with open(comparison_text_path, "w") as f:
+    with open(output_path, "w") as f:
         f.write(comparison_text)
 
-    logger.info(f"Model comparison text saved to {comparison_text_path}")
+    logger.info(f"Model comparison text saved to {output_path}")

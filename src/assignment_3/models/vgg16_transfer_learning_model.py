@@ -2,16 +2,13 @@
 Service for training and evaluating a transfer learning classifier using VGG16.
 """
 
-import json
-import time
-from typing import Any
 import tensorflow as tf
 from tensorflow.keras import Model
 from tensorflow.keras.applications import VGG16
 from tensorflow.keras.layers import Dense, Dropout, BatchNormalization
 
 from shared_lib.logger import logger
-from assignment_3.services.base_classifier_model import BaseClassifierModel
+from assignment_3.models.base_classifier_model import BaseClassifierModel
 
 
 class VGG16TransferLearningModel(BaseClassifierModel):
@@ -30,7 +27,7 @@ class VGG16TransferLearningModel(BaseClassifierModel):
 
     def build_model(self, num_classes: int) -> None:
         """
-        Build a model using VGG16 as a feature extractor.
+        Build a model using VGG16 as a feature extractor with fine-tuning.
 
         Args:
             num_classes: Number of classes to predict
@@ -45,12 +42,25 @@ class VGG16TransferLearningModel(BaseClassifierModel):
             input_shape=self.config.vgg16.input_shape,
         )
 
-        # Freeze the convolutional layers
-        for layer in base_model.layers:
-            layer.trainable = False
+        # Freeze most convolutional layers, but allow fine-tuning of the last few
+        trainable_layers = self.config.vgg16.trainable_layers
+        if trainable_layers > 0:
+            # VGG16 has 19 layers in total (including pool layers)
+            # First freeze all layers
+            for layer in base_model.layers:
+                layer.trainable = False
 
-        # Add new classifier layers using Functional API
-        features = base_model.output  # The pooled features from VGG16
+            # Then unfreeze the last n layers
+            for layer in base_model.layers[-trainable_layers:]:
+                logger.info(f"Making layer trainable: {layer.name}")
+                layer.trainable = True
+        else:
+            # Freeze all layers if trainable_layers is 0
+            for layer in base_model.layers:
+                layer.trainable = False
+
+        # Add new classifier layers 
+        features = base_model.output 
         x = features
 
         # Add all Dense layers from configuration
@@ -62,12 +72,13 @@ class VGG16TransferLearningModel(BaseClassifierModel):
         # Add output layer
         output = Dense(num_classes, activation="softmax")(x)
 
-        # Define new model using Functional API
+        # Define model
         model = Model(inputs=base_model.input, outputs=output)
 
-        # Create optimizer
+        # Create optimizer with momentum
         optimizer = tf.keras.optimizers.SGD(
-            learning_rate=self.config.vgg16.learning_rate
+            learning_rate=self.config.vgg16.learning_rate,
+            momentum=self.config.vgg16.momentum,
         )
 
         # Compile the model
@@ -92,40 +103,3 @@ class VGG16TransferLearningModel(BaseClassifierModel):
 
         self.model = model
         logger.info("VGG16 transfer learning model built successfully")
-
-    def train(self, train_dataset, validation_dataset) -> dict[str, Any]:
-        """
-        Train the transfer learning model.
-
-        Args:
-            train_dataset: Training dataset
-            validation_dataset: Validation dataset
-
-        Returns:
-            Training history
-        """
-        if self.model is None:
-            raise ValueError("Model not built. Call build_model() first.")
-
-        logger.info("Training VGG16 transfer learning model...")
-        start_time = time.time()
-
-        # Train the model
-        history = self.model.fit(
-            train_dataset,
-            validation_data=validation_dataset,
-            epochs=self.config.vgg16.epochs,
-        )
-
-        training_time = time.time() - start_time
-        logger.info(f"Model training completed in {training_time:.2f} seconds")
-
-        # Store the history
-        self.history = history.history
-
-        # Save the training history
-        with open(self.history_path, "w") as f:
-            json.dump(self.history, f)
-        logger.info(f"Training history saved to {self.history_path}")
-
-        return self.history

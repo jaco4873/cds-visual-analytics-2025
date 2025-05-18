@@ -43,18 +43,19 @@ class VGG16Config(BaseSettings):
 
     # Training parameters
     batch_size: int = 32
-    epochs: int = 5
+    epochs: int = 15
 
     # Transfer learning parameters
     include_top: bool = False
     pooling: str = "avg"
 
     # Fine-tuning parameters
-    learning_rate: float = 0.0001
-    trainable_layers: int = 0  # 0 means no layers from VGG16 are trainable
+    learning_rate: float = 0.0005
+    momentum: float = 0.9
+    trainable_layers: int = 4  # Unfreeze last 4 layers of VGG16
 
     # Top layers configuration
-    dense_units: list[int] = [128]  # Single layer with 128 units
+    dense_units: list[int] = [256, 128]  # Two layers with 256 and 128 units
     dropout_rate: float = 0.5
 
 
@@ -145,6 +146,40 @@ class Config(BaseSettings):
     cnn: CNNConfig = CNNConfig()
     vgg16: VGG16Config = VGG16Config()
     output: OutputConfig = OutputConfig()
+
+    def get_model_paths(self, model_type: str) -> dict:
+        """
+        Get all paths for a specific model type.
+
+        Args:
+            model_type: Type of model ('cnn' or 'vgg16')
+
+        Returns:
+            Dictionary containing all paths for the model
+        """
+        if model_type == "cnn":
+            return {
+                "output_dir": self.output.cnn_output_dir,
+                "model_path": self.output.cnn_model_path,
+                "report_path": self.output.cnn_report_path,
+                "history_path": self.output.cnn_history_path,
+                "plot_path": self.output.cnn_plot_path,
+            }
+        elif model_type == "vgg16":
+            return {
+                "output_dir": self.output.vgg16_output_dir,
+                "model_path": self.output.vgg16_model_path,
+                "report_path": self.output.vgg16_report_path,
+                "history_path": self.output.vgg16_history_path,
+                "plot_path": self.output.vgg16_plot_path,
+            }
+        else:
+            raise ValueError(f"Unsupported model type: {model_type}")
+
+    def ensure_model_directories(self, model_type: str) -> None:
+        """Create all necessary directories for a model."""
+        paths = self.get_model_paths(model_type)
+        os.makedirs(paths["output_dir"], exist_ok=True)
 
 
 # Create a global config instance

@@ -20,10 +20,11 @@ src/assignment_3/
 ├── assignment_description.md    # Assignment description
 ├── README.md                    # Project documentation
 ├── session9_inclass_rdkm.ipynb  # In-class notebook reference
-├── services/                    # Service modules
+├── data/                        # Data modules
+│   └── data_loader.py           # Data loader
+├── models/                      # Service modules
 │   ├── base_classifier_model.py # Base model class
 │   ├── cnn_model.py             # Direct CNN classifier
-│   ├── data_service.py          # Data loading and preprocessing
 │   └── vgg16_transfer_learning_model.py  # VGG16-based classifier
 ├── utils/                       # Utility functions
 │   └── model_comparison.py      # Model comparison utilities
@@ -63,22 +64,41 @@ The custom CNN is configured with the following architecture:
 - Trained for 15 epochs
 
 ### VGG16 Transfer Learning Model
-The transfer learning approach follows the methodology taught in class:
-- Uses VGG16 pretrained on ImageNet as the base model
-- Removes the top classification layers (include_top=False)
-- Freezes all convolutional layers to preserve learned features
-- Applies global average pooling to reduce dimensionality
-- Adds a custom classifier on top with:
-  - A single dense layer with 128 units (following class example)
-  - BatchNormalization for improved training stability
-  - Dropout (0.5) for regularization
-  - Softmax output layer for classification
-- Uses Adam optimizer with lower learning rate (0.0001)
-- Trained for 5 epochs to prevent overfitting
+- We're using VGG16 (pretrained on ImageNet) as our foundation
+- We've removed the top classification layers (include_top=False)
+- **We're fine-tuning the last 4 convolutional layers** 
+- We're applying global average pooling to simplify feature maps
+- The classifier contains:
+  - Two dense layers (256→128 units)
+  - BatchNormalization to stabilize training
+  - Dropout (0.5) to prevent overfitting
+  - Standard softmax output for classification
+- We use SGD with momentum (0.9) and a lower learning rate (0.0005)
+- We are training for 15 epochs to let fine-tuning work its magic
+
+#### Why We're Selectively Freezing Layers
+
+The idea of only making 4 layers trainable is for the below reasons:
+
+The first layers in VGG16 are already great at finding edges, textures, and basic shapes - these work for almost any image task, including Lego bricks according to a bit of research on Google. The deeper layers are seemingly more specialized for ImageNet objects (dogs, cats, cars), which aren't very "Lego-like."
+
+With this, we steer to model to:
+- **Stop overfitting in its tracks**: Our Lego dataset isn't huge, so training all the layers is probably slighly unreasonable.
+
+- **Save time and resources**: Training fewer parameters means faster iterations and less computing power needed.
+
+- **Get the best of both worlds**: We keep all the powerful feature detection VGG16 learned from millions of ImageNet images while adapting it to our specific Lego task.
+
+- **Gradient stability**: Prevents "catastrophic forgetting" of useful features and helps avoid vanishing/exploding gradients through the deep network.
+
+Our configuration provides flexibility through the `trainable_layers` parameter, which can be adjusted based on dataset size and similarity to ImageNet classes.
 
 ### Evaluation Methodology
-- Models are evaluated using a two-way data split (training and validation)
-- **Limitation**: The implementation reuses the validation set as the test set rather than using a true three-way separation, which may lead to slightly optimistic performance estimates
+- Models are evaluated using a proper three-way split:
+  - 80% training data for model training
+  - 10% validation data for hyperparameter tuning and early stopping
+  - 10% test data for final performance evaluation only
+- This prevents data leakage between validation and test sets, giving a more realistic estimate of model performance
 - Performance metrics include accuracy, precision, recall, and F1-score
 - Learning curves show training and validation accuracy/loss over epochs
 - Comparative analysis examines whether transfer learning improves performance
@@ -95,11 +115,14 @@ Then select option 3 from the menu.
 ### Manual Execution
 You can also run the code directly:
 ```bash
-# From the project root
-python -m src.assignment_3.main 
+# Navigate to src from the project root
+cd src
+
+# Run as module
+uv run python -m assignment_3.main 
 
 # With custom arguments
-python -m src.assignment_3.main --data-dir /path/to/lego/data --output-dir /path/to/output
+uv run python -m assignment_3.main --data-dir /path/to/lego/data --output-dir /path/to/output
 ```
 
 ### Command Line Arguments
@@ -108,7 +131,7 @@ python -m src.assignment_3.main --data-dir /path/to/lego/data --output-dir /path
 - `--cnn-only`: Train only the CNN model
 - `--vgg16-only`: Train only the VGG16 model
 
-## Results
+## Results - NEEDS UPDATE
 The experiment yielded striking differences between our two approaches. Here's what we found:
 
 ### The Custom CNN's Struggles

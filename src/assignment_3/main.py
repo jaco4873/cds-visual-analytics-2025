@@ -13,72 +13,46 @@ import os
 import sys
 import click
 
-
 from assignment_3.config import config
 from shared_lib.logger import logger
 
-from assignment_3.services.data_service import DataService
-from assignment_3.services.cnn_model import CNNModel
-from assignment_3.services.vgg16_transfer_learning_model import (
+from assignment_3.data.data_loader import DataLoader
+from assignment_3.models.cnn_model import CNNModel
+from assignment_3.models.vgg16_transfer_learning_model import (
     VGG16TransferLearningModel,
 )
 from assignment_3.utils.model_comparison import compare_models
 
 
-def setup_output_dirs():
-    """Set up output directories."""
-    os.makedirs(config.output.base_output_dir, exist_ok=True)
-    os.makedirs(config.output.cnn_output_dir, exist_ok=True)
-    os.makedirs(config.output.vgg16_output_dir, exist_ok=True)
-    logger.info(f"Output directories created at {config.output.base_output_dir}")
+def train_model(
+    data_loader: DataLoader, model_type: str
+) -> CNNModel | VGG16TransferLearningModel:
+    """Generic function to train either model type."""
+    logger.info(f"=== Starting {model_type.upper()} model training ===")
 
+    # Load data once
+    train_dataset, validation_dataset, test_dataset = data_loader.load_data()
+    class_names = data_loader.get_class_names()
 
-def train_cnn_model(data_service: DataService) -> CNNModel:
-    """Train and evaluate the direct CNN model."""
-    logger.info("=== Starting CNN model training ===")
+    # Initialize appropriate model
+    if model_type == "cnn":
+        model = CNNModel(config)
+    elif model_type == "vgg16":
+        model = VGG16TransferLearningModel(config)
+    else:
+        raise ValueError(f"Unknown model type: {model_type}")
 
-    # Load data
-    train_dataset, validation_dataset, test_dataset = data_service.load_data()
-    class_names = data_service.get_class_names()
+    # Build, train and evaluate
+    model.build_model(len(class_names))
+    model.train(train_dataset, validation_dataset)
+    model.evaluate(test_dataset)
 
-    # Initialize the CNN service
-    cnn_service = CNNModel(config)
+    # Generate plots and save model
+    model.plot_learning_curves()
+    model.save_model()
 
-    # Build, train, and evaluate the model
-    cnn_service.build_model(len(class_names))
-    cnn_service.train(train_dataset, validation_dataset)
-    cnn_service.evaluate(test_dataset, class_names)
-    cnn_service.plot_learning_curves()
-    cnn_service.save_model()
-
-    logger.info("=== CNN model training and evaluation completed ===")
-
-    return cnn_service
-
-
-def train_vgg16_model(data_service: DataService) -> VGG16TransferLearningModel:
-    """Train and evaluate the VGG16 transfer learning model."""
-    logger.info("=== Starting VGG16 transfer learning model training ===")
-
-    # Load data
-    train_dataset, validation_dataset, test_dataset = data_service.load_data()
-    class_names = data_service.get_class_names()
-
-    # Initialize the transfer learning service
-    transfer_learning_service = VGG16TransferLearningModel(config)
-
-    # Build, train, and evaluate the model
-    transfer_learning_service.build_model(len(class_names))
-    transfer_learning_service.train(train_dataset, validation_dataset)
-    transfer_learning_service.evaluate(test_dataset, class_names)
-    transfer_learning_service.plot_learning_curves()
-    transfer_learning_service.save_model()
-
-    logger.info(
-        "=== VGG16 transfer learning model training and evaluation completed ==="
-    )
-
-    return transfer_learning_service
+    logger.info(f"=== {model_type.upper()} model training and evaluation completed ===")
+    return model
 
 
 @click.command(help="Assignment 3 - Transfer Learning with Pretrained CNNs")
@@ -103,9 +77,6 @@ def main(data_dir, output_dir, cnn_only, vgg16_only):
     if output_dir:
         config.output.base_output_dir = output_dir
 
-    # Create output directories
-    setup_output_dirs()
-
     try:
         # Check if data directory exists
         if not os.path.exists(config.data.data_dir):
@@ -116,20 +87,22 @@ def main(data_dir, output_dir, cnn_only, vgg16_only):
             return 1
 
         # Initialize the data service
-        data_service = DataService(config)
+        data_loader = DataLoader(config)
 
         if cnn_only:
-            train_cnn_model(data_service)
+            train_model(data_loader, "cnn")
         elif vgg16_only:
-            train_vgg16_model(data_service)
+            train_model(data_loader, "vgg16")
         else:
-            # Train both models and compare them
-            train_cnn_model(data_service)
-            train_vgg16_model(data_service)
+            # Train both models
+            train_model(data_loader, "cnn")
+            train_model(data_loader, "vgg16")
 
+            # Compare models
             logger.info("Comparing model performance...")
             compare_models(
                 cnn_history_path=config.output.cnn_history_path,
+                vgg16_history_path=config.output.vgg16_history_path,
                 output_dir=config.output.base_output_dir,
             )
 
