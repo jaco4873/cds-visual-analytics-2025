@@ -43,6 +43,14 @@ uv sync
 
 Run the main script to process the newspaper images and generate the analysis:
 
+The simplest way to run the assignment is using the provided run.sh script:
+```bash
+./run.sh
+```
+Then select option 4 from the menu.
+
+Alternatively, you can run assignment 4 as a module as below:
+
 ```bash
 # Ensure you are in the right directory (src)
 cd src
