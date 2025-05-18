@@ -44,14 +44,17 @@ uv sync
 Run the main script to process the newspaper images and generate the analysis:
 
 ```bash
+# Ensure you are in the right directory (src)
+cd src
+
 # Process all newspapers
-uv run -m src.assignment_4.main
+uv run -m assignment_4.main
 
 # Process only a specific newspaper
-uv run -m src.assignment_4.main --newspaper GDL
+uv run -m assignment_4.main --newspaper GDL
 
 # Specify custom data and output directories
-uv run -m src.assignment_4.main --data-dir /path/to/data --output-dir /path/to/output
+uv run -m assignment_4.main --data-dir /path/to/data --output-dir /path/to/output
 ```
 
 ### Command Line Options

@@ -13,9 +13,9 @@ import sys
 import click
 
 from assignment_4.config import config
-from assignment_4.services.data_service import DataService
-from assignment_4.services.face_detection_service import FaceDetectionService
-from assignment_4.utils.visualization import (
+from assignment_4.data.data_service import DataService
+from assignment_4.models.face_detection_model import FaceDetectionService
+from assignment_4.visualization.visualization import (
     create_newspaper_plot,
     create_comparison_plot,
     create_combined_results_csv,

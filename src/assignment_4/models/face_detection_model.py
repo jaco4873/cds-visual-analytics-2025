@@ -11,7 +11,7 @@ from collections import defaultdict
 import pandas as pd
 from shared_lib.logger import logger
 from assignment_4.config import Config
-from assignment_4.services.data_service import DataService
+from assignment_4.data.data_service import DataService
 
 
 class FaceDetectionService:
