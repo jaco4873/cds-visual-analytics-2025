@@ -4,12 +4,14 @@ Base service for model training and evaluation.
 
 import os
 import tensorflow as tf
+import numpy as np
 import matplotlib.pyplot as plt
 from typing import Any
 from shared_lib.logger import logger
 import json
 import time
 from abc import ABC, abstractmethod
+from sklearn.metrics import classification_report
 from assignment_3.config import Config
 
 
@@ -33,7 +35,7 @@ class BaseClassifierModel(ABC):
 
         # Get all paths for this model type
         paths = self.config.get_model_paths(model_type)
-        self.__dict__.update(paths) 
+        self.__dict__.update(paths)
 
         # Ensure directories exist
         self.config.ensure_model_directories(model_type)
@@ -115,7 +117,13 @@ class BaseClassifierModel(ABC):
         test_results = self.model.evaluate(test_dataset)
 
         # Store results in a dictionary
-        metrics = dict(zip(self.model.metrics_names, test_results))
+        metrics = {}
+        for i, name in enumerate(self.model.metrics_names):
+            # Rename 'compile_metrics' to 'accuracy' for consistency
+            if name == "compile_metrics":
+                metrics["accuracy"] = test_results[i]
+            else:
+                metrics[name] = test_results[i]
 
         logger.info(f"Test metrics: {metrics}")
 
@@ -180,3 +188,34 @@ class BaseClassifierModel(ABC):
         self.model.save(self.model_path)
 
         logger.info(f"Model saved to {self.model_path}")
+
+    def generate_classification_report(self, test_dataset):
+        """Generate and save a detailed classification report using scikit-learn."""
+
+        # Collect all predictions and true labels
+        y_true = []
+        y_pred = []
+
+        # Process the dataset batch by batch
+        for x, y in test_dataset:
+            # Get predictions
+            predictions = self.model.predict(x, verbose=0)
+            pred_classes = np.argmax(predictions, axis=1)
+
+            # Convert to numpy arrays and append
+            y_true.extend(y.numpy())
+            y_pred.extend(pred_classes)
+
+        # Generate the report
+        class_names = (
+            test_dataset.class_names if hasattr(test_dataset, "class_names") else None
+        )
+        report = classification_report(y_true, y_pred, target_names=class_names)
+
+        # Save the report
+        with open(self.report_path, "w") as f:
+            f.write(report)
+
+        logger.info(f"Classification report saved to {self.report_path}")
+
+        return report

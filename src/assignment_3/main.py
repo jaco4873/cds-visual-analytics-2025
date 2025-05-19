@@ -30,8 +30,8 @@ def train_model(
     """Generic function to train either model type."""
     logger.info(f"=== Starting {model_type.upper()} model training ===")
 
-    # Load data once
-    train_dataset, validation_dataset, test_dataset = data_loader.load_data()
+    # Load data
+    train_dataset, validation_dataset, test_dataset = data_loader.load_data(model_type)
     class_names = data_loader.get_class_names()
 
     # Initialize appropriate model
@@ -46,6 +46,7 @@ def train_model(
     model.build_model(len(class_names))
     model.train(train_dataset, validation_dataset)
     model.evaluate(test_dataset)
+    model.generate_classification_report(test_dataset)
 
     # Generate plots and save model
     model.plot_learning_curves()
@@ -103,6 +104,13 @@ def main(data_dir, output_dir, cnn_only, vgg16_only):
             compare_models(
                 cnn_history_path=config.output.cnn_history_path,
                 vgg16_history_path=config.output.vgg16_history_path,
+                cnn_test_metrics_path=os.path.join(
+                    os.path.dirname(config.output.cnn_history_path), "test_metrics.json"
+                ),
+                vgg16_test_metrics_path=os.path.join(
+                    os.path.dirname(config.output.vgg16_history_path),
+                    "test_metrics.json",
+                ),
                 output_dir=config.output.base_output_dir,
             )
 

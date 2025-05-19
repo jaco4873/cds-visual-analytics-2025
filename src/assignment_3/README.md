@@ -74,10 +74,7 @@ src/assignment_3/
 ### Data Processing
 - Images are resized to 224×224 pixels with 3 color channels
 - Batches of 32 images are processed at a time
-- Data is split with 20% for validation during training
-- Image normalization scales pixel values to [0-1]
-- Data augmentation is applied to improve model robustness:
-  - Horizontal flipping
+- Data is split with 80/10/10 % train, test and validation.
 
 ### CNN Model Architecture
 The custom CNN is configured with the following architecture:
@@ -123,7 +120,7 @@ Our configuration provides flexibility through the `trainable_layers` parameter,
 ### Evaluation Methodology
 - Models are evaluated using a proper three-way split:
   - 80% training data for model training
-  - 10% validation data for hyperparameter tuning and early stopping
+  - 10% validation data for early stopping
   - 10% test data for final performance evaluation only
 - This prevents data leakage between validation and test sets, giving a more realistic estimate of model performance
 - Performance metrics include accuracy, precision, recall, and F1-score
@@ -131,44 +128,37 @@ Our configuration provides flexibility through the `trainable_layers` parameter,
 - Comparative analysis examines whether transfer learning improves performance
 
 
-## Results - NEEDS UPDATE
-The experiment yielded striking differences between our two approaches. Here's what we found:
+## Results
 
-### The Custom CNN's Struggles
-Our simple CNN really struggled with the Lego classification task, achieving only about 14% accuracy after 15 epochs of training. Most Lego brick types were barely recognized or not recognized at all - for example, it completely failed to identify Brick_1x1, Brick_2x2, and several other classes with 0% recall. The best it could manage was about 78% recall on Plate_1x1_Slope pieces, but with terrible precision (only 8.5%).
+Our experiments with two different approaches to Lego brick classification yielded valuable insights about the benefits of transfer learning in computer vision tasks, following the evaluation methodology outlined above.
 
-The learning curves show the model was slow to improve, starting around 6% accuracy and crawling up to 16% by the end of training. Even after 15 epochs, there were no signs of overfitting - instead, the model was clearly underfitting the data.
+### Overall Performance Comparison
 
-### VGG16's Superior Performance
-In stark contrast, the VGG16 transfer learning approach knocked it out of the park with 63% overall accuracy after just 5 epochs. Some classes were recognized with amazing reliability - Plate_1x1_Round had nearly perfect results with 99% F1-score, and several other classes achieved F1-scores above 70%.
+The CNN model achieved respectable performance with a test accuracy of 82.69% after 15 epochs of training. Starting from around 12% accuracy, the model showed consistent improvement throughout training, with validation accuracy reaching 81.92% by the final epoch - closely tracking the training accuracy of 84.77%. This alignment between training and validation metrics indicates the model generalized well to unseen data within our 80-10-10 split.
 
-What's particularly impressive is how quickly the VGG16 model learned. Starting at just 10% accuracy, it jumped to 45% on the training set and 63% on validation after only 5 epochs. The validation accuracy was still climbing in the final epoch, suggesting we could get even better results with more training time.
+The VGG16 transfer learning approach delivered superior performance, reaching 95.51% test accuracy - approximately a 13 percentage point improvement over the custom CNN. Interestingly, the VGG16 model showed rapid initial learning, with validation accuracy (94.42%) actually exceeding training accuracy (91.29%) in the final epoch, strongly suggesting that the pre-trained features transferred effectively to our Lego classification task.
 
-### Why Transfer Learning Won
-The dramatic difference (14% vs 63% accuracy) clearly shows the power of transfer learning for this task. By leveraging VGG16's pre-trained weights from ImageNet, we inherited powerful feature extractors that could recognize edges, textures, and shapes relevant to our Lego classification problem.
+### Learning Comparison
 
-This 4.5× improvement in accuracy is especially notable considering the VGG16 model trained for only 5 epochs compared to the CNN's 15 epochs. 
+The custom CNN showed a gradual, steady learning curve with both training and validation metrics improving consistently across epochs. The narrow gap between final training (84.77%) and validation (81.92%) accuracies suggests the model found a good balance between fitting the training data and generalizing to the validation set.
 
-### Learning Dynamics Comparison
-The custom CNN showed slow and limited improvement, with accuracy plateauing below 16% despite 15 epochs of training. The learning curves indicate persistent underfitting and low model capacity. In contrast, the VGG16 model achieved rapid and consistent gains, reaching over 60% validation accuracy in just 5 epochs. The validation accuracy consistently exceeded training, highlighting strong generalization from the pretrained features. Overall, the learning dynamics clearly favor the transfer learning approach.
+The VGG16 model exhibited more dynamic learning behavior, with some fluctuations in validation accuracy but an overall stronger trajectory. By epoch 8, it had already achieved validation accuracy above 93%. The final validation accuracy of 94.42% actually exceeds the training accuracy of 91.29%, and this pattern continues with the test accuracy of 95.51% - a sign of excellent generalization across all three data splits.
 
-### Further Improvements
-The VGG16 model's learning trajectory suggests we'd likely see additional gains with more training epochs, as validation accuracy was still increasing in the final epoch. We might also benefit from fine-tuning some of the later convolutional layers in VGG16, which could adapt the generic ImageNet features more specifically to Lego brick characteristics.
+The big difference in performance between the two models shows why transfer learning works so well for specific image tasks like this one. By using VGG16's pre-trained weights from ImageNet, our model started with ready-made feature detectors that could already spot important patterns in Lego bricks - things like edges, colors, textures, and shapes. By fine-tuning just the last 4 convolutional layers, we let the model adapt these general features to the specific characteristics of Lego bricks.
 
-### Parameter Analysis and Impact
+What's really interesting is that the VGG16 model not only got higher accuracy but also did better at generalizing to new images, as shown by its validation (94.42%) and test (95.51%) results being better than its training results (91.29%). This suggests that the patterns learned from the diverse ImageNet dataset work surprisingly well even for something as different as Lego brick classification.
 
-**CNN Configuration Impact:**
-- The relatively high learning rate (0.001) with limited training (15 epochs) likely contributed to the CNN's poor performance, as complex image classification tasks typically need more time to converge
-- Our simple 3-layer CNN architecture with [32, 64, 128] filters was insufficient for capturing the nuanced features of Lego bricks
-- The larger dense layers [512, 256] may have introduced too many parameters for the model to learn effectively from our limited dataset
+### Architecture Impact
 
-**VGG16 Transfer Learning Advantages:**
-- The lower learning rate (0.0001) paired with frozen convolutional layers allowed for stable adaptation of the pre-trained features
-- Using average pooling effectively reduced dimensionality while preserving spatial information
-- The simplified classifier (single 128-unit dense layer) prevented overfitting while leveraging VGG16's robust feature extraction
-- Setting trainable_layers=0 (complete feature freezing) proved highly effective, demonstrating that ImageNet features transfer well to Lego classification
+Our configuration choices for both models played significant roles in their performance. The CNN's architecture with three convolutional layers (increasing from 32 to 64 to 128 filters) and two dense layers (512, 256 units) provided sufficient capacity to learn meaningful features from scratch, but couldn't match the VGG16's pre-trained feature hierarchy.
 
-Interestingly, the VGG16 model achieved superior results despite using fewer dense layers and training for only 5 epochs compared to the CNN's 15 epochs, showing that transfer learning is efficient for this task.
+For the VGG16 model, our strategy of freezing early layers while fine-tuning the last 4 convolutional layers proved highly effective. This approach preserved general visual feature detectors while allowing adaptation to Lego-specific characteristics. The classifier head we added - with two dense layers (256, 128 units) and a dropout rate of 0.5 - prevented overfitting despite the model's considerable capacity.
+
+The performance difference between the models underscores that transfer learning from large, diverse datasets can dramatically improve results on specialized tasks with relatively small datasets, even when the target domain (Lego bricks) differs significantly from the source domain (ImageNet's natural images).
+
+### Limitations
+
+We did not perform hyperparameter optimization for either model, instead using fixed configurations based on common practices. The training process runs for a predetermined number of epochs (15) without implementing early stopping based on validation performance. This means models may train longer than necessary, or potentially benefit from additional training epochs. Additionally, we limited our exploration to specific architectures: a basic CNN and VGG16 transfer learning, without comparing against other model architectures or transfer learning approaches. Different data augmentation strategies or more extensive fine-tuning of the VGG16 layers might yield even better results. These limitations present opportunities for future work to further improve performance on the Lego classification task.
 
 ## Requirements
 - TensorFlow 2.x
