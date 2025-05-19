@@ -29,6 +29,17 @@ uv run python -m assignment_3.main
 uv run python -m assignment_3.main --data-dir /path/to/lego/data --output-dir /path/to/output
 ```
 
+## Configuration
+
+The project uses a central configuration system in `config.py` that can be modified to customize various aspects:
+
+- Data Configuration: Control image dimensions, data directory paths, and data augmentation settings
+- CNN Model Configuration: Adjust architecture parameters, learning rates, and training settings
+- VGG16 Model Configuration: Configure transfer learning parameters, fine-tuning depth, and training settings
+- Output Configuration: Set output directory paths for saving models, reports, and visualizations
+
+All settings are managed through Pydantic classes, making it easy to modify behavior without changing code.
+
 #### Command Line Arguments
 - `--data-dir`: Path to the Lego data directory (must exist and be a directory)
 - `--output-dir`: Path to save the output (default: ./src/assignment_3/output)
@@ -85,12 +96,13 @@ The custom CNN is configured with the following architecture:
 - Dropout (0.5) for regularization
 - Softmax output layer for classification
 - Adam optimizer with learning rate 0.001
-- Trained for 15 epochs
+- Early stopping with patience=8 to prevent overfitting
+- Trained for up to 30 epochs (may stop earlier with early stopping)
 
 ### VGG16 Transfer Learning Model
 - We're using VGG16 (pretrained on ImageNet) as our foundation
 - We've removed the top classification layers (include_top=False)
-- **We're fine-tuning the last 4 convolutional layers** 
+- We're fine-tuning the last 4 convolutional layers 
 - We're applying global average pooling to simplify feature maps
 - The classifier contains:
   - Two dense layers (256→128 units)
@@ -98,35 +110,28 @@ The custom CNN is configured with the following architecture:
   - Dropout (0.5) to prevent overfitting
   - Standard softmax output for classification
 - We use SGD with momentum (0.9) and a lower learning rate (0.0005)
-- We are training for 15 epochs to let fine-tuning work its magic
+- Early stopping with patience=8 to prevent overfitting
+- We are training for up to 30 epochs (may stop earlier with early stopping)
 
-#### Why We're Selectively Freezing Layers
+#### Transfer Learning Strategy
 
-The idea of only making 4 layers trainable is for the below reasons:
+Our implementation freezes earlier VGG16 layers while making only the final 4 convolutional layers trainable. This approach makes use of the hierarchical nature of convolutional networks, where initial layers capture universal visual primitives (edges, textures, basic shapes) that generalize well across domains, while deeper layers represent increasingly task-specific features. 
 
-The first layers in VGG16 are already great at finding edges, textures, and basic shapes - these work for almost any image task, including Lego bricks according to a bit of research on Google. The deeper layers are seemingly more specialized for ImageNet objects (dogs, cats, cars), which aren't very "Lego-like."
+First, it addresses the potential for overfitting given our relatively constrained dataset size. By limiting the number of trainable parameters, we create a more favorable ratio between trainable weights and available training examples.
 
-With this, we steer to model to:
-- **Stop overfitting in its tracks**: Our Lego dataset isn't huge, so training all the layers is probably slighly unreasonable.
+Second, this approach significantly reduces computational requirements compared to full fine-tuning.
 
-- **Save time and resources**: Training fewer parameters means faster iterations and less computing power needed.
+Third, the method creates an balance between knowledge transfer and domain adaptation. By preserving the robust feature extractors from VGG16's early layers (trained on millions of ImageNet images) while allowing later layers to adapt to Lego-specific characteristics,
 
-- **Get the best of both worlds**: We keep all the powerful feature detection VGG16 learned from millions of ImageNet images while adapting it to our specific Lego task.
+Finally, selective freezing provides gradient stability benefits during training. By reducing the network's effective depth from the perspective of backpropagation, we mitigate vanishing gradient issues and prevent catastrophic forgetting of useful pre-trained features.
 
-- **Gradient stability**: Prevents "catastrophic forgetting" of useful features and helps avoid vanishing/exploding gradients through the deep network.
-
-Our configuration provides flexibility through the `trainable_layers` parameter, which can be adjusted based on dataset size and similarity to ImageNet classes.
+The transfer learning configuration is parameterized through the `trainable_layers` setting, allowing experimentation with freezing strategies based on dataset characteristics and target domain similarity to the ImageNet source distribution.
 
 ### Evaluation Methodology
-- Models are evaluated using a proper three-way split:
-  - 80% training data for model training
-  - 10% validation data for early stopping
-  - 10% test data for final performance evaluation only
-- This prevents data leakage between validation and test sets, giving a more realistic estimate of model performance
-- Performance metrics include accuracy, precision, recall, and F1-score
-- Learning curves show training and validation accuracy/loss over epochs
-- Comparative analysis examines whether transfer learning improves performance
 
+Our evaluation framework implements a three-way data partitioning, allocating 80% of available data for model training, 10% for validation-based early stopping decision, and 10% for unbiased final performance assessment. This approach prevents potential data leakage between model selection and evaluation phases, giving a more realistic estimate of model performance.
+
+Performance quantification incorporates both primary metrics (accuracy) and secondary distributional metrics (precision, recall, F1-score) to provide insight into classification behavior across all class categories. Temporal learning dynamics are visualized through epoch-wise training and validation metrics, enabling identification of potential optimization issues including underfitting, overfitting, and convergence patterns.
 
 ## Results
 
@@ -134,13 +139,13 @@ Our experiments with two different approaches to Lego brick classification yield
 
 ### Overall Performance Comparison
 
-The CNN model achieved respectable performance with a test accuracy of 82.69% after 15 epochs of training. Starting from around 12% accuracy, the model showed consistent improvement throughout training, with validation accuracy reaching 81.92% by the final epoch - closely tracking the training accuracy of 84.77%. This alignment between training and validation metrics indicates the model generalized well to unseen data within our 80-10-10 split.
+The CNN model achieved respectable performance with a test accuracy of 84.40% after 28 epochs of training. Starting from around 10% accuracy, the model showed consistent improvement throughout training, with validation accuracy reaching 85.04% by epoch 20 (the best validation epoch). The training accuracy continued to increase to 95.60% by the final epoch, suggesting some potential overfitting despite early stopping being applied. The model seems to have generalized well to unseen data within our 80-10-10 split.
 
-The VGG16 transfer learning approach delivered superior performance, reaching 95.51% test accuracy - approximately a 13 percentage point improvement over the custom CNN. Interestingly, the VGG16 model showed rapid initial learning, with validation accuracy (94.42%) actually exceeding training accuracy (91.29%) in the final epoch, strongly suggesting that the pre-trained features transferred effectively to our Lego classification task.
+The VGG16 transfer learning approach delivered superior performance, reaching 95.51% test accuracy - approximately an 11 percentage point improvement over the custom CNN. Interestingly, the VGG16 model showed rapid initial learning, with validation accuracy (94.42%) actually exceeding training accuracy (91.29%) in the final epoch, strongly suggesting that the pre-trained features transferred effectively to our Lego classification task.
 
 ### Learning Comparison
 
-The custom CNN showed a gradual, steady learning curve with both training and validation metrics improving consistently across epochs. The narrow gap between final training (84.77%) and validation (81.92%) accuracies suggests the model found a good balance between fitting the training data and generalizing to the validation set.
+The custom CNN showed a somewhat uneven learning curve with fluctuations in validation metrics, though with an overall positive trajectory. The training accuracy steadily increased to 95.60% by the final epoch, while validation accuracy peaked at 85.04% in epoch 20 before declining slightly, triggering early stopping. This growing gap between training and validation metrics indicates the model was beginning to overfit to the training data.
 
 The VGG16 model exhibited more dynamic learning behavior, with some fluctuations in validation accuracy but an overall stronger trajectory. By epoch 8, it had already achieved validation accuracy above 93%. The final validation accuracy of 94.42% actually exceeds the training accuracy of 91.29%, and this pattern continues with the test accuracy of 95.51% - a sign of excellent generalization across all three data splits.
 
@@ -158,7 +163,7 @@ The performance difference between the models underscores that transfer learning
 
 ### Limitations
 
-We did not perform hyperparameter optimization for either model, instead using fixed configurations based on common practices. The training process runs for a predetermined number of epochs (15) without implementing early stopping based on validation performance. This means models may train longer than necessary, or potentially benefit from additional training epochs. Additionally, we limited our exploration to specific architectures: a basic CNN and VGG16 transfer learning, without comparing against other model architectures or transfer learning approaches. Different data augmentation strategies or more extensive fine-tuning of the VGG16 layers might yield even better results. These limitations present opportunities for future work to further improve performance on the Lego classification task.
+We did not perform hyperparameter optimization for either model, instead using fixed configurations based on common practices. We implemented early stopping with a patience of 8 epochs based on validation performance to prevent overfitting. Additionally, we limited our exploration to specific architectures: a basic CNN and VGG16 transfer learning, without comparing against other model architectures or transfer learning approaches. Different data augmentation strategies or more extensive fine-tuning of the VGG16 layers might yield even better results. These limitations present opportunities for future work to further improve performance on the Lego classification task.
 
 ## Requirements
 - TensorFlow 2.x

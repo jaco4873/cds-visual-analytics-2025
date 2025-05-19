@@ -71,18 +71,31 @@ class BaseClassifierModel(ABC):
         logger.info(f"Training {self.model_type} model...")
         start_time = time.time()
 
-        # Get epochs from the appropriate config section based on model type
-        epochs = (
-            self.config.vgg16.epochs
-            if self.model_type == "vgg16"
-            else self.config.cnn.epochs
+        # Get config from the appropriate section based on model type
+        model_config = (
+            self.config.vgg16 if self.model_type == "vgg16" else self.config.cnn
         )
+
+        # Setup callbacks
+        callbacks = []
+
+        # Add early stopping if enabled
+        if model_config.early_stopping:
+            early_stopping = tf.keras.callbacks.EarlyStopping(
+                monitor="val_loss",
+                patience=model_config.early_stopping_patience,
+                min_delta=model_config.early_stopping_min_delta,
+                restore_best_weights=model_config.restore_best_weights,
+                verbose=1,
+            )
+            callbacks.append(early_stopping)
 
         # Train the model
         history = self.model.fit(
             train_dataset,
             validation_data=validation_dataset,
-            epochs=epochs,
+            epochs=model_config.epochs,
+            callbacks=callbacks,
         )
 
         training_time = time.time() - start_time

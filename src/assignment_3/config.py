@@ -20,7 +20,7 @@ class CNNConfig(BaseSettings):
 
     # Training parameters
     batch_size: int = 32
-    epochs: int = 15
+    epochs: int = 30
 
     # Model parameters
     learning_rate: float = 0.001
@@ -31,6 +31,12 @@ class CNNConfig(BaseSettings):
     pool_size: tuple[int, int] = (2, 2)
     dense_units: list[int] = [512, 256]
     dropout_rate: float = 0.5
+
+    # Early stopping parameters
+    early_stopping: bool = True
+    early_stopping_patience: int = 8
+    early_stopping_min_delta: float = 0.001
+    restore_best_weights: bool = True
 
 
 class VGG16Config(BaseSettings):
@@ -43,7 +49,7 @@ class VGG16Config(BaseSettings):
 
     # Training parameters
     batch_size: int = 32
-    epochs: int = 15
+    epochs: int = 30
 
     # Transfer learning parameters
     include_top: bool = False
@@ -57,6 +63,12 @@ class VGG16Config(BaseSettings):
     # Top layers configuration
     dense_units: list[int] = [256, 128]  # Two layers with 256 and 128 units
     dropout_rate: float = 0.5
+
+    # Early stopping parameters
+    early_stopping: bool = True
+    early_stopping_patience: int = 5
+    early_stopping_min_delta: float = 0.01
+    restore_best_weights: bool = True
 
 
 class DataConfig(BaseSettings):
