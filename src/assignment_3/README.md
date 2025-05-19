@@ -28,6 +28,12 @@ uv run python -m assignment_3.main
 uv run python -m assignment_3.main --data-dir /path/to/lego/data --output-dir /path/to/output
 ```
 
+## Dataset
+- Source and format: The dataset consists of images of various Lego bricks arranged in folders named after the brick type. 
+- The data should be placed in the `data/lego` directory. 
+- We use the data from the "Cropped Images" folder, which contains images with backgrounds removed - to be specific, there should be folders with brick in subdirectories: `data/lego/Cropped Images/*`
+
+
 ## Configuration
 
 The project uses a central configuration system in `config.py` that can be modified to customize various aspects:
@@ -71,11 +77,6 @@ src/assignment_3/
         ├── learning_curves.png
         └── training_history.json
 ```
-
-## Dataset
-- Source and format: The dataset consists of images of various Lego bricks arranged in folders named after the brick type. 
-- The data should be placed in the `data/lego` directory. 
-- We use the data from the "Cropped Images" folder, which contains images with backgrounds removed.
 
 ## Implementation Details
 

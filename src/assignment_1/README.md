@@ -13,6 +13,8 @@ The simplest way to run the assignment is using the provided run.sh script:
 ```
 Then select option 1 from the menu.
 
+Note: This will ALSO ask you whether you want to download the data, if you do not have it in the correct folder.
+
 You can also run the code without relying on run.sh:
 
 ```bash

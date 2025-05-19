@@ -10,6 +10,15 @@ This project analyzes the presence of human faces in historical Swiss newspapers
 
 The analysis uses a pre-trained CNN model (MTCNN) to detect faces in newspaper page images, groups the results by decade, and visualizes trends in the prevalence of human faces in print media over approximately 200 years.
 
+## Data
+
+This project uses the Swiss newspapers corpus from [this Zenodo dataset](https://zenodo.org/records/3706863). The dataset contains:
+
+- 1008 newspaper pages from the Gazette de Lausanne (1790s-1990s)
+- 1982 newspaper pages from the Journal de Genève (1820s-1990s)
+- 1634 newspaper pages from the Impartial (1880s-2010s)
+
+The images should be located at `data/newspapers/images/` and organized into three subfolders (GDL, JDG, IMP) corresponding to each newspaper.
 
 ## Quickstart
 
@@ -67,16 +76,6 @@ assignment_4/
     ├── results/               # CSV results
     └── plots/                 # Visualization plots
 ```
-
-## Data
-
-This project uses the Swiss newspapers corpus from [this Zenodo dataset](https://zenodo.org/records/3706863). The dataset contains:
-
-- 1008 newspaper pages from the Gazette de Lausanne (1790s-1990s)
-- 1982 newspaper pages from the Journal de Genève (1820s-1990s)
-- 1634 newspaper pages from the Impartial (1880s-2010s)
-
-The images are located at `data/newspapers/images/` and organized into three folders (GDL, JDG, IMP) corresponding to each newspaper.
 
 ## Methodology
 
