@@ -178,7 +178,7 @@ The experiments on the CIFAR-10 dataset yielded interesting findings:
 - Still struggled with cats (24.88% F1-score), suggesting this class is inherently challenging
 - Early stopping triggered after 50 iterations
 
-Looking at both models, it's clear the neural network does a much better job with these complex images, even when converted to grayscale. It's interesting that cats were consistently the hardest class for both models to identify - probably because cats have more varied poses and appearances than other classes. I noticed vehicles (cars, trucks, ships) were the easiest to classify across both models, which makes sense since they have more consistent shapes and features. This pattern suggests that object distinctiveness matters more than the actual complexity of the object when it comes to classification performance.
+Looking at both models, it's clear the neural network does a much better job with these complex images, even when converted to grayscale. It's interesting that cats were consistently the hardest class for both models to identify. I noticed vehicles (cars, trucks, ships) were the easiest to classify across both models.
 
 ## Requirements
 
