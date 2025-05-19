@@ -21,8 +21,7 @@ The simplest way to run the assignment is using the provided run.sh script:
 ```
 Then select option 4 from the menu.
 
-### Manual Execution
-Alternatively, you can run assignment 4 as a module as below:
+Alternatively, you can run assignment 4 without run.sh as a module:
 
 ```bash
 # Ensure you are in the right directory (src)
@@ -37,8 +36,17 @@ uv run -m assignment_4.main --newspaper GDL
 # Specify custom data and output directories
 uv run -m assignment_4.main --data-dir /path/to/data --output-dir /path/to/output
 ```
+## Configuration
 
-#### Command Line Options
+The project uses a central configuration system in `config.py` that can be modified to customize various aspects:
+
+- **Face Detection Configuration**: Control MTCNN model parameters including detection thresholds, minimum face size, and scale factor
+- **Data Configuration**: Set data directory paths and specify which newspapers to analyze
+- **Output Configuration**: Define output directory paths for saving results and visualizations
+- 
+### Command Line Options
+
+Furthermore, a few options are also available via the CLI:
 
 - `--data-dir`: Path to the newspaper images directory (must exist and be a directory)
 - `--output-dir`: Path to save the output

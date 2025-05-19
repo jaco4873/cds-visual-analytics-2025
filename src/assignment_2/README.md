@@ -14,9 +14,7 @@ The simplest way to run the assignment is using the provided run.sh script:
 Then select option 2 from the menu.
 
 **Note:** Using the run.sh script will execute the assignment with default configurations only. For customized runs with different parameters, see the Advanced Execution Options section below.
-
-### Manual Execution
-To run the assignment directly, navigate to the src directory and execute:
+To run the assignment without run.sh, navigate to the src directory and execute:
 
 ```bash
 cd src

@@ -43,7 +43,7 @@ This script will:
 
 **Note:** The interactive assignment runner executes all assignments with their default configurations only. For customized runs with different parameters, please refer to the "Manual Setup and Running" section below or the assignment-specific READMEs.
 
-## Manual Setup
+## Setup without using run.sh
 
 If you prefer to set up and run assignments manually, follow these steps:
 
@@ -57,7 +57,7 @@ chmod +x setup.sh
 ./setup.sh
 ```
 
-### Manual Execution
+### Executing without using run.sh
 
 After setup, you can run individual assignments:
 

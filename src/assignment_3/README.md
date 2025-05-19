@@ -16,8 +16,7 @@ The simplest way to run the assignment is using the provided run.sh script:
 ```
 Then select option 3 from the menu.
 
-### Manual Execution
-You can also run the code directly:
+You can also run the code without run.sh:
 ```bash
 # Navigate to src from the project root
 cd src
