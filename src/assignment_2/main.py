@@ -7,16 +7,12 @@ configuration-based approach.
 
 import os
 import click
-from assignment_2.config import (
-    CIFAR10Config,
-    LogisticRegressionConfig,
-    NeuralNetworkConfig,
-)
 from assignment_2.models.logistic_regression import (
     LogisticRegressionClassifier,
 )
 from assignment_2.models.neural_network import NeuralNetworkClassifier
 from shared_lib.logger import logger
+from assignment_2.config import config
 
 
 @click.command()
@@ -28,41 +24,32 @@ from shared_lib.logger import logger
     default="both",
     help="Which model to run",
 )
-def main(model) -> None:
+def main(model: str) -> None:
     """
     Run the CIFAR-10 classification pipeline based on configuration.
 
     This script trains and evaluates classifiers on the CIFAR-10 dataset
     using either logistic regression, neural network, or both approaches.
     """
-    # Customize model configurations as needed or change the defaults in config:
-    lr_config = LogisticRegressionConfig()
-
-    nn_config = NeuralNetworkConfig()
-
-    config = CIFAR10Config(
-        run_models=model,  # from command line argument
-        grayscale=True,
-        normalize=True,
-        log_level="INFO",
-        logistic_regression=lr_config,
-        neural_network=nn_config,
-    )
 
     # Ensure output directory exists
     os.makedirs(config.output_dir, exist_ok=True)
 
+    # Override config with CLI parameter
+    run_models = model
+
     logger.info("Starting CIFAR-10 classification")
     logger.info(f"Output directory: {config.output_dir}")
+    logger.info(f"Running models: {run_models}")
 
     # Run selected classifiers
-    if config.run_models in ["logistic_regression", "both"]:
+    if run_models in ["logistic_regression", "both"]:
         logger.info("\n========== Logistic Regression Classifier ==========")
-        LogisticRegressionClassifier(config).run_pipeline()
+        LogisticRegressionClassifier().run_pipeline()
 
-    if config.run_models in ["neural_network", "both"]:
+    if run_models in ["neural_network", "both"]:
         logger.info("\n========== Neural Network Classifier ==========")
-        NeuralNetworkClassifier(config).run_pipeline()
+        NeuralNetworkClassifier().run_pipeline()
 
     logger.info(f"\nAll outputs saved to {config.output_dir}")
 

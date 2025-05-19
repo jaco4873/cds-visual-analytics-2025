@@ -7,7 +7,6 @@ from abc import ABC, abstractmethod
 from typing import Any
 import numpy as np
 
-from assignment_2.config import CIFAR10Config
 from assignment_2.utils.cifar_10 import (
     load_cifar10,
     preprocess_cifar10,
@@ -19,6 +18,7 @@ from assignment_2.utils.model_evaluation import (
     save_model_info,
 )
 from shared_lib.logger import logger
+from assignment_2.config import config
 
 
 class BaseClassifier(ABC):
@@ -30,12 +30,9 @@ class BaseClassifier(ABC):
     classifier models by overriding the train() method.
     """
 
-    def __init__(self, config: CIFAR10Config):
+    def __init__(self):
         """
         Initialize the classifier with configuration parameters.
-
-        Args:
-            config: Configuration object with model and preprocessing parameters
         """
         self.config = config
         self.model = None
@@ -70,13 +67,13 @@ class BaseClassifier(ABC):
             logger.info(f"  X_test: {X_test.shape}, y_test: {y_test.shape}")
 
             logger.info(
-                f"Preprocessing data (grayscale={self.config.grayscale}, normalize={self.config.normalize})..."
+                f"Preprocessing data (grayscale={self.config.cifar10.grayscale}, normalize={self.config.cifar10.normalize})..."
             )
             X_train_processed, X_test_processed = preprocess_cifar10(
                 X_train,
                 X_test,
-                grayscale=self.config.grayscale,
-                normalize=self.config.normalize,
+                grayscale=self.config.cifar10.grayscale,
+                normalize=self.config.cifar10.normalize,
             )
 
             logger.info("Processed data shapes:")
@@ -90,17 +87,47 @@ class BaseClassifier(ABC):
             logger.error(f"Error during data loading or preprocessing: {str(e)}")
             raise RuntimeError(f"Failed to load or preprocess data: {str(e)}")
 
-    @abstractmethod
-    def train(self, X_train: np.ndarray, y_train: np.ndarray) -> None:
+    def train_with_config(
+        self,
+        X_train: np.ndarray,
+        y_train: np.ndarray,
+        config_section,
+        model_class,
+        extra_params=None,
+    ) -> None:
         """
-        Train the classifier on the training data.
-
-        This method must be implemented by all subclasses.
+        Generic training method using configuration.
 
         Args:
             X_train: Training features
             y_train: Training labels
+            config_section: Configuration section to use (e.g., self.config.logistic_regression)
+            model_class: Scikit-learn model class to instantiate
+            extra_params: Additional parameters not in config to pass to the model
+            excluded_log_params: Parameters not to include in logging
         """
+        # Get config as dictionary
+        params = config_section.model_dump()
+
+        # Add extra parameters if provided
+        if extra_params:
+            params.update(extra_params)
+
+        self.log_training_parameters(params)
+
+        try:
+            # Create and train model
+            self.model = model_class(**params)
+            self.model.fit(X_train, y_train.ravel())
+            self.check_convergence(config_section)
+
+        except Exception as e:
+            logger.error(f"Error during training: {str(e)}")
+            raise RuntimeError(f"Failed to train model: {str(e)}")
+
+    @abstractmethod
+    def check_convergence(self, config_section) -> None:
+        """Check for convergence issues and log warnings if needed."""
         pass
 
     def log_training_parameters(self, parameters: dict[str, Any]) -> None:
@@ -155,7 +182,8 @@ class BaseClassifier(ABC):
 
             # Generate confusion matrix
             cm_path = os.path.join(
-                self.config.output_dir, f"{type(self).__name__}_confusion_matrix.png"
+                self.config.output_dir,
+                f"{type(self).__name__}_confusion_matrix.png",
             )
             plot_confusion_matrix(y_test, y_pred, self.class_names, output_file=cm_path)
             logger.info(f"Confusion matrix saved to {cm_path}")

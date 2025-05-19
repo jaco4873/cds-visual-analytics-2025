@@ -2,13 +2,11 @@
 Neural Network classifier (MLPClassifier) for CIFAR-10 images.
 """
 
-import time
-from sklearn.neural_network import MLPClassifier
-import numpy as np
 import os
+import numpy as np
+from sklearn.neural_network import MLPClassifier
 
 from assignment_2.models.base_classifier import BaseClassifier
-from assignment_2.config import CIFAR10Config
 from assignment_2.utils.model_evaluation import plot_mlp_loss_curve
 from shared_lib.logger import logger
 
@@ -17,17 +15,6 @@ class NeuralNetworkClassifier(BaseClassifier):
     """
     CIFAR-10 image classifier using Neural Network (MLPClassifier).
     """
-
-    def __init__(self, config: CIFAR10Config = None):
-        """
-        Initialize the Neural Network classifier.
-
-        Args:
-            config: Configuration object with model parameters
-        """
-        if config is None:
-            config = CIFAR10Config(model_type="neural_network")
-        super().__init__(config)
 
     def train(self, X_train: np.ndarray, y_train: np.ndarray) -> None:
         """
@@ -41,60 +28,36 @@ class NeuralNetworkClassifier(BaseClassifier):
             ValueError: If configuration parameters are invalid
             RuntimeError: If training fails
         """
-        nn_config = self.config.neural_network
+        self.train_with_config(
+            X_train,
+            y_train,
+            self.config.neural_network,
+            MLPClassifier,
+            extra_params={"verbose": True},
+        )
 
-        # Log training parameters
-        parameters = {
-            "hidden_layer_sizes": nn_config.hidden_layer_sizes,
-            "activation": nn_config.activation,
-            "solver": nn_config.solver,
-            "alpha": nn_config.alpha,
-            "batch_size": nn_config.batch_size,
-            "learning_rate": nn_config.learning_rate,
-            "max_iter": nn_config.max_iter,
-            "early_stopping": nn_config.early_stopping,
-        }
-        self.log_training_parameters(parameters)
+    def check_convergence(self, config_section) -> None:
+        """
+        Check for neural network convergence issues.
 
-        try:
-            # Create model
-            self.model = MLPClassifier(
-                hidden_layer_sizes=nn_config.hidden_layer_sizes,
-                activation=nn_config.activation,
-                solver=nn_config.solver,
-                alpha=nn_config.alpha,
-                batch_size=nn_config.batch_size,
-                learning_rate=nn_config.learning_rate,
-                max_iter=nn_config.max_iter,
-                early_stopping=nn_config.early_stopping,
-                validation_fraction=nn_config.validation_fraction,
-                n_iter_no_change=nn_config.n_iter_no_change,
-                tol=nn_config.tol,
-                verbose=True,
+        Args:
+            config_section: Neural network configuration section
+        """
+        if self.model.n_iter_ >= config_section.max_iter:
+            logger.warning(
+                f"Neural network reached maximum iterations ({config_section.max_iter}). "
+                "Model may not have converged. Consider increasing max_iter."
             )
-
-            # Train model with timing
-            start_time = time.time()
-            self.model.fit(X_train, y_train.ravel())
-            training_time = time.time() - start_time
-
-            logger.info(f"Training completed in {training_time:.2f} seconds")
-            logger.info(f"Number of iterations: {self.model.n_iter_}")
-
-            # Warning for potential issues
-            if self.model.n_iter_ >= nn_config.max_iter:
-                logger.warning(
-                    f"Neural network reached maximum iterations ({nn_config.max_iter}). "
-                    "Model may not have converged. Consider increasing max_iter."
-                )
-
-        except Exception as e:
-            logger.error(f"Error during neural network training: {str(e)}")
-            raise RuntimeError(f"Failed to train neural network: {str(e)}")
 
     def evaluate(self, X_test: np.ndarray, y_test: np.ndarray) -> float:
         """
         Evaluate the classifier on test data with neural network specific visualizations.
+
+        This method extends the base evaluation by:
+        1. First calling the parent class's evaluate() to perform standard evaluation
+           (generating classification report, confusion matrix, etc.)
+        2. Then adding neural network-specific evaluation by generating and saving
+           the loss curve that visualizes the training process
 
         Args:
             X_test: Test features

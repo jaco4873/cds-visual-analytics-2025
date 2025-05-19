@@ -25,63 +25,32 @@ uv run python -m assignment_2.main
 
 #### Customizing Configuration
 
-To customize the configuration, override default config by editing the `main.py` file:
+There are two ways to customize the configuration:
 
-```python
-# Edit this configuration to change parameters
-# Create model-specific configurations
-lr_config = LogisticRegressionConfig(
-    max_iter=2000,
-    solver="saga",
-)
+1. **Edit config.py:** Modify the default configuration values directly in the `config.py` file.
+2. **Use command line options:** Override specific settings using command line flags when running the script.
 
-nn_config = NeuralNetworkConfig(
-    hidden_layer_sizes=(200, 100),  # Two hidden layers
-    max_iter=200,
-)
-
-# Main configuration
-config = CIFAR10Config(
-    # Run settings - choose which classifiers to run
-    run_models="both",  # Options: "logistic_regression", "neural_network", "both"
-    
-    # Data processing
-    grayscale=True,  # Convert images to grayscale
-    normalize=True,  # Normalize pixel values
-    
-    # Model configurations
-    logistic_regression=lr_config,
-    neural_network=nn_config,
-)
-```
-
-#### Command Line Options
-
-You can also customize the run using the command line.
+You can customize the run using command line options which will override the corresponding settings in `config.py`.
 The main.py script accepts the following commands:
 
 ```
 --model  Which model to run [logistic_regression, neural_network, both]
-         Default: both
+         If not specified, uses the value from config.py (default: "both")
 ```
 
 Example usage:
 ```bash
 cd src
-uv run python -m src.assignment_2.main --model neural_network
+uv run python -m assignment_2.main --model neural_network
 ```
 
-You can also view the help information:
-```bash
-uv run python -m src.assignment_2.main --help
-```
+When the `--model` flag is provided, it overrides the `run_models` setting in the configuration. If not provided, the script uses the value from `config.py`.
 
 ## Project Structure
 
 ```
 src/assignment_2/
 ├── README.md                          # This documentation file
-├── assignment_description.md          # Original assignment specifications
 ├── main.py                            # Main script to run classifiers
 ├── config.py                          # Configuration class for all parameters
 ├── models/                            # Classification model implementations
@@ -93,13 +62,7 @@ src/assignment_2/
 │   ├── image_utils.py                 
 │   └── model_evaluation.py                
 └── output/                            # Primary results and output files directory
-    ├── LogisticRegressionClassifier_confusion_matrix.png
-    ├── LogisticRegressionClassifier_info.txt
-    ├── LogisticRegressionClassifier_report.txt
-    ├── NeuralNetworkClassifier_confusion_matrix.png
-    ├── NeuralNetworkClassifier_info.txt
-    ├── NeuralNetworkClassifier_loss_curve.png
-    └── NeuralNetworkClassifier_report.txt
+        ...
 
 ```
 
@@ -140,6 +103,11 @@ The implementation uses scikit-learn's LogisticRegression with the following def
 - Tolerance: 0.001
 - Regularization parameter (C): 0.1
 
+Note that in scikit-learn's LogisticRegression:
+- `max_iter` refers to the maximum number of solver iterations for convergence (not epochs)
+- The solver will stop earlier if the model converges (when the improvement in loss is less than `tol`)
+- The actual number of iterations is typically lower than the maximum when convergence is reached
+
 ### Neural Network Classifier
 
 The implementation uses scikit-learn's MLPClassifier with the following default parameters:
@@ -154,6 +122,12 @@ The implementation uses scikit-learn's MLPClassifier with the following default 
 - Validation fraction: 0.1 
 - n_iter_no_change: 10
 - Tolerance: 0.0001
+
+Note that in scikit-learn's MLPClassifier:
+- `max_iter` directly corresponds to the maximum number of epochs (complete passes through the training data)
+- With `early_stopping` enabled, training may stop before reaching the maximum number of epochs
+- Training stops after `n_iter_no_change` consecutive epochs without improvement on the validation set
+- The actual number of epochs conducted is typically lower than the maximum (as shown in the Results Analysis section, the model stopped after 48 epochs due to early stopping)
 
 ## Output
 
@@ -174,16 +148,16 @@ The classifiers generate the following outputs in the specified output directory
 The experiments on the CIFAR-10 dataset yielded interesting findings:
 
 ### Logistic Regression Classifier
-- Achieved an overall accuracy of 29.58% on the test set
-- Best performance on truck (40.26% F1-score) and automobile (36.78% F1-score) classes
-- Struggled most with cat (18.63% F1-score) and deer (20.81% F1-score) classes
+- Achieved an overall accuracy of 29.59% on the test set
+- Best performance on truck (40.28% F1-score) and automobile (36.84% F1-score) classes
+- Struggled most with cat (18.64% F1-score) and deer (20.83% F1-score) classes
 - Converged after 121 iterations with the saga solver
 
 ### Neural Network Classifier
-- Achieved a significantly higher overall accuracy of 43.17%
-- Best performance on ship (52.84% F1-score) and automobile (52.15% F1-score) classes
-- Still struggled with cats (26.33% F1-score), suggesting this class is inherently challenging
-- Early stopping triggered after 48 iterations
+- Achieved a significantly higher overall accuracy of 43.85%
+- Best performance on truck (51.44% F1-score), ship (51.24% F1-score), and automobile (50.58% F1-score) classes
+- Still struggled with cats (24.88% F1-score), suggesting this class is inherently challenging
+- Early stopping triggered after 50 iterations
 
 Looking at both models, it's clear the neural network does a much better job with these complex images, even when converted to grayscale. It's interesting that cats were consistently the hardest class for both models to identify - probably because cats have more varied poses and appearances than other classes. I noticed vehicles (cars, trucks, ships) were the easiest to classify across both models, which makes sense since they have more consistent shapes and features. This pattern suggests that object distinctiveness matters more than the actual complexity of the object when it comes to classification performance.
 
