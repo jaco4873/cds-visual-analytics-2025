@@ -86,15 +86,6 @@ class DataConfig(BaseSettings):
     # Data splitting
     validation_split: float = 0.2
 
-    # Data augmentation settings
-    use_augmentation: bool = True
-    rotation_range: int = 20
-    zoom_range: float = 0.15
-    width_shift_range: float = 0.2
-    height_shift_range: float = 0.2
-    horizontal_flip: bool = True
-
-
 class OutputConfig(BaseSettings):
     """
     Configuration settings for output files and directories.

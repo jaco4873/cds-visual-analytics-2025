@@ -32,7 +32,7 @@ uv run python -m assignment_3.main --data-dir /path/to/lego/data --output-dir /p
 
 The project uses a central configuration system in `config.py` that can be modified to customize various aspects:
 
-- Data Configuration: Control image dimensions, data directory paths, and data augmentation settings
+- Data Configuration: Control image dimensions and data directory paths settings
 - CNN Model Configuration: Adjust architecture parameters, learning rates, and training settings
 - VGG16 Model Configuration: Configure transfer learning parameters, fine-tuning depth, and training settings
 - Output Configuration: Set output directory paths for saving models, reports, and visualizations
@@ -85,6 +85,7 @@ src/assignment_3/
 - Images are resized to 224×224 pixels with 3 color channels
 - Batches of 32 images are processed at a time
 - Data is split with 80/10/10 % train, test and validation.
+- We experimented with various data augmentation techniques (rotation, zoom, flip, shift) but found that models achieved better validation results without any augmentation. The final implementation therefore uses the original images without augmentation.
 
 ### CNN Model Architecture
 The custom CNN is configured with the following architecture:
@@ -162,7 +163,9 @@ The performance difference between the models underscores that transfer learning
 
 ### Limitations
 
-We did not perform hyperparameter optimization for either model, instead using fixed configurations based on common practices. We implemented early stopping with a patience of 8 epochs based on validation performance to prevent overfitting. Additionally, we limited our exploration to specific architectures: a basic CNN and VGG16 transfer learning, without comparing against other model architectures or transfer learning approaches. Different data augmentation strategies or more extensive fine-tuning of the VGG16 layers might yield even better results. These limitations present opportunities for future work to further improve performance on the Lego classification task.
+We did not perform hyperparameter optimization for either model, instead using fixed configurations based on common practices. We implemented early stopping with a patience of 8 epochs based on validation performance to prevent overfitting. Additionally, we limited our exploration to specific architectures: a basic CNN and VGG16 transfer learning, without comparing against other model architectures or transfer learning approaches. 
+
+Although our initial experiments with data augmentation showed better validation results without augmentation, further experimentation with different augmentation strategies (such as more targeted transformations specific to the Lego domain) might further improve results. Similarly, more extensive fine-tuning of the VGG16 layers might yield even better performance. These limitations present opportunities for future work to further improve performance on the Lego classification task.
 
 ## Requirements
 - TensorFlow 2.x

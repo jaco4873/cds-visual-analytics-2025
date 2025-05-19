@@ -88,7 +88,7 @@ def main(data_dir, output_dir, cnn_only, vgg16_only):
             return 1
 
         # Initialize the data service
-        data_loader = DataLoader(config)
+        data_loader = DataLoader()
 
         if cnn_only:
             train_model(data_loader, "cnn")
