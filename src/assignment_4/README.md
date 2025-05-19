@@ -43,7 +43,7 @@ The project uses a central configuration system in `config.py` that can be modif
 - **Face Detection Configuration**: Control MTCNN model parameters including detection thresholds, minimum face size, and scale factor
 - **Data Configuration**: Set data directory paths and specify which newspapers to analyze
 - **Output Configuration**: Define output directory paths for saving results and visualizations
-- 
+
 ### Command Line Options
 
 Furthermore, a few options are also available via the CLI:
@@ -139,8 +139,7 @@ IMP shows a distinctive pattern:
 #### The Gazette de Lausanne (GDL, 1804-1991)
 
 For GDL, the results indicate:
-- The earliest periods (1790s-1850s) show minimal face detection (0-3%) which we can reasonable interpret as being mostly false positives despite we adjusted the detection thresholds upwards from the defaults. 
-  - We can consider these false positives as we now photography was not used before the last part of the 19th century.
+- The earliest periods (1790s-1850s) show minimal face detection (0-3%) which we can interpret as being false positives despite we adjusted the detection thresholds upwards from the defaults.  The first photo in a newspaper was published in 1848.
 - No faces detected from 1840s through 1890s
 - A clear emergence starting in the 1900s (13%)
 - Consistent presence in the 1910s-1930s (10-11%)
@@ -184,16 +183,14 @@ This analysis provides a quantitative glimpse into the visual transformation of 
 
 This analysis has several limitations to consider:
 
-1. **Image Quality**: Historical newspaper scans vary in quality, which may affect face detection accuracy.
-2. **Historical Context**: Changes in newspaper formats, layouts, and content focus over time might influence the results.
-3. **Temporal Distribution**: While we have a substantial number of pages from each newspaper, the distribution across different time periods may not be even, potentially affecting decade-to-decade comparisons.
-4. **Detection Thresholds**: The analysis required adjusting detection confidence thresholds ([0.7, 0.9, 0.9] instead of default [0.6, 0.7, 0.7]) to reduce false positives in earlier periods. 
-This adjustment was necessary because the MTCNN model, trained primarily on modern photographs, can misidentify illustrations or decorative elements in historical newspapers as faces. This highlights the challenges of applying modern computer vision tools to historical materials.
-1. **Limited Hyperparameter Optimization**: Our threshold adjustment ([0.7, 0.9, 0.9]) was based on visual inspection rather than systematic optimization. A more rigorous approach using grid search with manually annotated ground truth data from different periods could potentially yield better discrimination between real faces and false positives.
-2. **Model Selection**: We exclusively used MTCNN for face detection. Other modern face detection algorithms might perform differently on historical materials and could be compared in future work.
-3. **Qualitative Analysis**: Our analysis counts faces but doesn't distinguish between photographs, illustrations, or engravings, nor does it consider face size, placement, or prominence on the page - all factors that influence visual impact.
-4. **Lack of Ground Truth**: Without manually annotated historical newspaper data, we couldn't quantitatively evaluate detection performance (precision/recall) across different eras, making it difficult to objectively measure false positive and false negative rates.
-
+1. **Model Training Data**: MTCNN was only trained on modern photographs, making it prone to misdetecting other objects as faces in historical materials.
+2. **Image Quality**: Historical newspaper scans vary in quality, affecting face detection accuracy.
+3. **Historical Context**: Changes in newspaper formats, layouts, and content focus over time might influence results.
+4. **Temporal Distribution**: Uneven distribution of pages across time periods may affect decade-to-decade comparisons.
+5. **Detection Thresholds**: Analysis required adjusted confidence thresholds ([0.7, 0.9, 0.9] vs default [0.6, 0.7, 0.7]) to reduce false positives. This adjustment was based on visual inspection rather than systematic optimization.
+6. **Model Selection**: We exclusively used MTCNN. Other face detection algorithms might perform differently on historical materials.
+7. **Qualitative Analysis**: Our analysis counts faces but doesn't distinguish between photographs, illustrations, or engravings, nor considers face size, placement, or prominence.
+8. **Lack of Ground Truth**: Without manually annotated historical newspaper data, we couldn't quantitatively evaluate detection performance across different eras.
 ## Requirements
 
 This project requires the following Python packages:
@@ -213,5 +210,5 @@ This project was created as part of the Cultural Data Science - Visual Analytics
 
 - Dataset: Swiss newspapers corpus from [Zenodo](https://zenodo.org/records/3706863)
 - Face detection: [FaceNet-PyTorch](https://github.com/timesler/facenet-pytorch) implementation of MTCNN
-
+- Note in MTCNN training on modern photographs: [FaceNet: A unified embedding for face recognition and clustering](https://ieeexplore.ieee.org/document/7298682)
 

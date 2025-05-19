@@ -21,7 +21,6 @@ from assignment_3.models.cnn_model import CNNModel
 from assignment_3.models.vgg16_transfer_learning_model import (
     VGG16TransferLearningModel,
 )
-from assignment_3.utils.model_comparison import compare_models
 
 
 def train_model(
@@ -98,21 +97,6 @@ def main(data_dir, output_dir, cnn_only, vgg16_only):
             # Train both models
             train_model(data_loader, "cnn")
             train_model(data_loader, "vgg16")
-
-            # Compare models
-            logger.info("Comparing model performance...")
-            compare_models(
-                cnn_history_path=config.output.cnn_history_path,
-                vgg16_history_path=config.output.vgg16_history_path,
-                cnn_test_metrics_path=os.path.join(
-                    os.path.dirname(config.output.cnn_history_path), "test_metrics.json"
-                ),
-                vgg16_test_metrics_path=os.path.join(
-                    os.path.dirname(config.output.vgg16_history_path),
-                    "test_metrics.json",
-                ),
-                output_dir=config.output.base_output_dir,
-            )
 
         logger.info("Assignment 3 completed successfully!")
         return 0

@@ -78,20 +78,31 @@ The implementation follows a modular architecture with the following components:
 - **Visualization**: Plotting loss curves (for Neural Network)
 - **Configuration-Based**: Uses Pydantic models for flexible configuration
 
-### Configuration System
-
-The implementation uses a Pydantic-based configuration system that allows:
-
-- Setting all parameters through a single configuration object
-- Default values for all parameters
-- Type validation and conversion
-
 ### Data Preprocessing (default settings)
 
 1. Load the CIFAR-10 dataset using TensorFlow's keras.datasets
 2. Convert images to grayscale (optional)
 3. Normalize pixel values to [0, 1]
 4. Flatten the images to be compatible with scikit-learn classifiers
+
+### Data Splitting
+
+It's worth noting how the data is split differently between the models:
+
+1. **Initial Split**: The CIFAR-10 dataset comes pre-divided into 50,000 training images and 10,000 test images.
+
+2. **Neural Network Classifier** (with early stopping enabled):
+   - Creates a three-way split of the data
+   - Training set: 45,000 images (90% of original training data)
+   - Validation set: 5,000 images (10% of original training data, controlled by validation_fraction parameter)
+   - Test set: 10,000 images (original test set)
+   - The validation set is created internally by scikit-learn's MLPClassifier and used to monitor performance for early stopping
+
+3. **Logistic Regression Classifier**:
+   - Uses a simple two-way split
+   - Training set: All 50,000 training images
+   - Test set: 10,000 images (original test set)
+   - No validation set is needed since there's no early stopping mechanism
 
 ### Logistic Regression Classifier
 
@@ -127,24 +138,7 @@ Note that in scikit-learn's MLPClassifier:
 - Training stops after `n_iter_no_change` consecutive epochs without improvement on the validation set
 - The actual number of epochs conducted is typically lower than the maximum (as shown in the Results Analysis section, the model stopped after 50 epochs due to early stopping)
 
-### Data Splitting
 
-It's worth noting how the data is split differently between the models:
-
-1. **Initial Split**: The CIFAR-10 dataset comes pre-divided into 50,000 training images and 10,000 test images.
-
-2. **Neural Network Classifier** (with early stopping enabled):
-   - Creates a three-way split of the data
-   - Training set: 45,000 images (90% of original training data)
-   - Validation set: 5,000 images (10% of original training data, controlled by validation_fraction parameter)
-   - Test set: 10,000 images (original test set)
-   - The validation set is created internally by scikit-learn's MLPClassifier and used to monitor performance for early stopping
-
-3. **Logistic Regression Classifier**:
-   - Uses a simple two-way split
-   - Training set: All 50,000 training images
-   - Test set: 10,000 images (original test set)
-   - No validation set is needed since there's no early stopping mechanism
 
 ## Output
 

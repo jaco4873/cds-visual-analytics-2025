@@ -10,7 +10,6 @@ The project is organized into multiple assignments, each focusing on different a
 - **Assignment 2**: Image classification benchmarks with Logistic Regression and Neural Networks
 - **Assignment 3**: Transfer learning with pretrained CNNs for Lego brick classification
 - **Assignment 4**: Face detection
-- *(Additional assignments will be added as the course progresses)*
 
 ## Quickstart
 
@@ -101,25 +100,43 @@ Each assignment has its own README file with detailed information:
 
 ```
 ├── README.md                  # Main documentation file
-├── src/                       # Source code directory
-│   ├── assignment_1/          # Assignment 1 implementation (image search)
-│   │   ├── scripts/           # Implementation scripts for search algorithms
-│   │   ├── services/          # Service components for search functionality
-│   │   ├── utils/             # Image utility functions
-│   │   └── output/            # Assignment 1 specific outputs
-│   ├── assignment_2/          # Assignment 2 implementation (image classification)
-│   │   ├── models/            # Classification model implementations
-│   │   ├── utils/             # Assignment-specific utilities
-│   │   └── output/            # Output directory for results
-│   ├── assignment_3/          # Assignment 3 implementation (transfer learning)
-│   │   ├── data/              # Data loading functionality
-│   │   ├── models/            # CNN and VGG16 model implementations
-│   │   ├── utils/             # Utility functions for model comparison
-│   │   └── output/            # Output directory for model results
-│   ├── assignment_4/          # Assignment 4 implementation (face detection)
-│   │   ├── data/              # Data service components
-│   │   ├── models/            # Face detection model implementation
-│   │   ├── visualization/     # Visualization components
-│   │   └── output/            # Output directory for results and plots
-│   └── shared_lib/            # Shared utilities used across assignments
+├── assignment_1/              # Assignment 1 implementation (image search)
+│   ├── README.md              # Assignment-specific documentation
+│   ├── assignment_description.md # Original assignment details
+│   ├── check_and_download_data.sh # Data download script
+│   ├── config.py              # Configuration settings
+│   ├── main.py                # Entry point for assignment 1
+│   ├── output/                # Assignment 1 specific outputs
+│   ├── scripts/               # Implementation scripts for search algorithms
+│   ├── services/              # Service components for search functionality
+│   └── utils/                 # Image utility functions
+├── assignment_2/              # Assignment 2 implementation (image classification)
+│   ├── README.md              # Assignment-specific documentation
+│   ├── assignment_description.md # Original assignment details
+│   ├── config.py              # Configuration settings
+│   ├── main.py                # Entry point for assignment 2
+│   ├── models/                # Classification model implementations
+│   ├── output/                # Output directory for results
+│   └── utils/                 # Assignment-specific utilities
+├── assignment_3/              # Assignment 3 implementation (transfer learning)
+│   ├── README.md              # Assignment-specific documentation
+│   ├── assignment_description.md # Original assignment details
+│   ├── config.py              # Configuration settings
+│   ├── data/                  # Data loading functionality
+│   ├── main.py                # Entry point for assignment 3
+│   ├── models/                # CNN and VGG16 model implementations
+│   ├── output/                # Output directory for model results
+│   └── utils/                 # Utility functions for model comparison
+├── assignment_4/              # Assignment 4 implementation (face detection)
+│   ├── README.md              # Assignment-specific documentation
+│   ├── assignment_description.md # Original assignment details
+│   ├── config.py              # Configuration settings
+│   ├── data/                  # Data service components
+│   ├── main.py                # Entry point for assignment 4
+│   ├── models/                # Face detection model implementation
+│   ├── output/                # Output directory
+│   │   ├── plots/             # Visualization plots
+│   │   └── results/           # Analysis results
+│   └── visualization/         # Visualization components
+└── shared_lib/                # Shared utilities used across assignments
 ```

@@ -30,7 +30,7 @@ The will:
   - Embedding results: `assignment_1/output/embedding_results.csv`
 
 
-```
+
 ## Configuration
 The parameters are defined in `config.py` using a hierarchy of Pydantic BaseSettings classes, which provides validation of configuration values:
 
@@ -104,22 +104,10 @@ This service class encapsulates the core functionality for embedding-based searc
 - **Similar Image Search**: Compares the target image embedding with all others using cosine similarity
 - **Results Export**: Saves the search results to a CSV file
 
-### Error Handling
-The implementation includes error handling:
-- Validates input parameters and paths
-- Logs errors and provides informative messages
-- Ensures output directories exist before writing files
-
-### Performance Considerations
-- Histograms and embeddings are computed once and stored in memory for efficient comparison
-- Progress logging for long-running operations like embedding extraction
-- The implementation uses OpenCV's optimized functions for histogram extraction and comparison
-- TensorFlow's batch prediction for efficient embedding extraction
-
 ## Results
 
 ### Histogram-based Search
-Using the Chi-Square distance metric (lower values indicate more similarity), our histogram-based search found the following most similar images to the target image (image_0001.jpg):
+Using the Chi-Square distance metric (lower values indicate more similarity), our histogram-based search found the following most similar images to the target image (image_0001.jpg), listed first:
 
 | Rank | Filename       | Distance     |
 |------|---------------|--------------|
@@ -133,7 +121,7 @@ Using the Chi-Square distance metric (lower values indicate more similarity), ou
 Manual inspection of these results showed that the histogram approach successfully identified visually similar photos in terms of color composition - most featured yellow flowers in the center with some green in the background, matching the color pattern of the target image.
 
 ### Embedding-based Search
-Using VGG16 embeddings and cosine similarity (higher values indicate more similarity), our embedding-based search found the following most similar images:
+Using VGG16 embeddings and cosine similarity (higher values indicate more similarity), our embedding-based search found the following most similar images to the target image (image_0001.jpg), listed first:
 
 | Rank | Filename       | Similarity   |
 |------|---------------|--------------|
