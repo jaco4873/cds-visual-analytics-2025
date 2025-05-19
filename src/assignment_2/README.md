@@ -127,7 +127,26 @@ Note that in scikit-learn's MLPClassifier:
 - `max_iter` directly corresponds to the maximum number of epochs (complete passes through the training data)
 - With `early_stopping` enabled, training may stop before reaching the maximum number of epochs
 - Training stops after `n_iter_no_change` consecutive epochs without improvement on the validation set
-- The actual number of epochs conducted is typically lower than the maximum (as shown in the Results Analysis section, the model stopped after 48 epochs due to early stopping)
+- The actual number of epochs conducted is typically lower than the maximum (as shown in the Results Analysis section, the model stopped after 50 epochs due to early stopping)
+
+### Data Splitting
+
+It's worth noting how the data is split differently between the models:
+
+1. **Initial Split**: The CIFAR-10 dataset comes pre-divided into 50,000 training images and 10,000 test images.
+
+2. **Neural Network Classifier** (with early stopping enabled):
+   - Creates a three-way split of the data
+   - Training set: 45,000 images (90% of original training data)
+   - Validation set: 5,000 images (10% of original training data, controlled by validation_fraction parameter)
+   - Test set: 10,000 images (original test set)
+   - The validation set is created internally by scikit-learn's MLPClassifier and used to monitor performance for early stopping
+
+3. **Logistic Regression Classifier**:
+   - Uses a simple two-way split
+   - Training set: All 50,000 training images
+   - Test set: 10,000 images (original test set)
+   - No validation set is needed since there's no early stopping mechanism
 
 ## Output
 
