@@ -45,7 +45,7 @@ def process_newspapers(newspaper: str | None = None) -> int:
     """
     try:
         # Initialize services
-        data_service = DataService(config)
+        data_service = DataService()
         face_detection_service = FaceDetectionService(config)
 
         # Determine which newspapers to process
