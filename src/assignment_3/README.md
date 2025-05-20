@@ -30,8 +30,8 @@ uv run python -m assignment_3.main --data-dir /path/to/lego/data --output-dir /p
 
 ## Dataset
 - Source and format: The dataset consists of images of various Lego bricks arranged in folders named after the brick type. 
-- The data should be placed in the `data/lego` directory. 
-- We use the data from the "Cropped Images" folder, which contains images with backgrounds removed - to be specific, there should be folders with brick in subdirectories: `data/lego/Cropped Images/*`
+- The data should be placed in the `data/lego/` directory. 
+- We use the data from the `data/lego/cropped` folder, which contains images with backgrounds removed - to be specific, there should be folders with subdirectories with images as: `data/lego/cropped/*`
 
 
 ## Configuration

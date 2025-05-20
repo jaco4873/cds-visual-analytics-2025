@@ -77,7 +77,7 @@ class DataConfig(BaseSettings):
     """
 
     # Path to the dataset (will be defined in main script)
-    data_dir: str = str(PROJECT_ROOT / "data" / "lego" / "Cropped Images")
+    data_dir: str = str(PROJECT_ROOT / "data" / "lego" / "cropped")
 
     # Image settings
     img_height: int = 224
@@ -85,6 +85,7 @@ class DataConfig(BaseSettings):
 
     # Data splitting
     validation_split: float = 0.2
+
 
 class OutputConfig(BaseSettings):
     """
