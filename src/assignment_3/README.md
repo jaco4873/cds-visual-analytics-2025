@@ -84,7 +84,7 @@ src/assignment_3/
 - Images are resized to 224×224 pixels with 3 color channels
 - Batches of 32 images are processed at a time
 - Data is split with 80/10/10 % train, test and validation.
-- We experimented with various data augmentation techniques (rotation, zoom, flip, shift) but found that models achieved better validation results without any augmentation. The final implementation therefore uses the original images without augmentation.
+- We experimented with various data augmentation techniques (rotation, zoom, flip, shift) but found that models achieved better validation results without augmentation. The final implementation therefore uses the original images without augmentation.
 
 ### CNN Model Architecture
 The custom CNN is configured with the following architecture:
@@ -134,27 +134,29 @@ Performance quantification incorporates both primary metrics (accuracy) and seco
 
 ## Results
 
-Our experiments with two different approaches to Lego brick classification yielded valuable insights about the benefits of transfer learning in computer vision tasks, following the evaluation methodology outlined above.
+Our experiments comparing custom CNN and transfer learning approaches for Lego brick classification showed benefits of pre-trained models.
 
-### Overall Performance Comparison
+### Performance Comparison
 
-The CNN model achieved respectable performance with a test accuracy of 84.40% after 28 epochs of training. Starting from around 13% accuracy, the model showed consistent improvement throughout training, with validation accuracy reaching 86.16% by epoch 25 (the best validation epoch). The training accuracy continued to increase to 95.58% by the final epoch, suggesting some potential overfitting despite early stopping being applied. The model seems to have generalized well to unseen data within our 80-10-10 split.
+The custom CNN achieved 84.40% test accuracy after 28 epochs, with training and validation accuracies of 95.58% and 86.16% respectively. Despite early stopping, the growing gap between training and validation metrics indicated the model was beginning to overfit.
 
-The VGG16 transfer learning approach delivered superior performance, reaching 95.51% test accuracy - approximately an 11 percentage point improvement over the custom CNN. Interestingly, the VGG16 model showed rapid initial learning, with validation accuracy (94.42%) actually exceeding training accuracy (91.29%) in the final epoch, strongly suggesting that the pre-trained features transferred effectively to our Lego classification task. The best validation accuracy of 96.65% was achieved in epoch 12.
+The VGG16 transfer learning approach substantially outperformed the custom CNN with 96.58% test accuracy - a 12 percentage point improvement. The VGG16 model demonstrated rapid learning (reaching >93% validation accuracy by epoch 8) and exceptional generalization, with validation (97.10%) and test (96.58%) accuracies actually exceeding training accuracy (93.40%).
+
+This performance difference shows transfer learning's effectiveness in classification tasks. The model efficiently adapted general visual pattern recognition to Lego-specific characteristics.
 
 ### Learning Comparison
 
 The custom CNN showed a somewhat uneven learning curve with fluctuations in validation metrics, though with an overall positive trajectory. The training accuracy steadily increased to 95.58% by the final epoch, while validation accuracy peaked at 86.16% in epoch 25 before declining slightly, triggering early stopping. This growing gap between training and validation metrics indicates the model was beginning to overfit to the training data.
 
-The VGG16 model exhibited more dynamic learning behavior, with some fluctuations in validation accuracy but an overall stronger trajectory. By epoch 8, it had already achieved validation accuracy above 93%. The final validation accuracy of 94.42% actually exceeds the training accuracy of 91.29%, and this pattern continues with the test accuracy of 95.51% - a sign of excellent generalization across all three data splits.
+The VGG16 model exhibited better learning with some fluctuations in validation accuracy but an overall stronger trajectory. By epoch 8, it had already achieved validation accuracy above 93%. The final validation accuracy of 97.10% actually exceeds the training accuracy of 93.40%, and this pattern continues with the test accuracy of 96.58% - a sign of excellent generalization across all three data splits.
 
 The big difference in performance between the two models shows why transfer learning works so well for specific image tasks like this one. By using VGG16's pre-trained weights from ImageNet, our model started with ready-made feature detectors that could already spot important patterns in Lego bricks - things like edges, colors, textures, and shapes. By fine-tuning just the last 4 convolutional layers, we let the model adapt these general features to the specific characteristics of Lego bricks.
 
-What's really interesting is that the VGG16 model not only got higher accuracy but also did better at generalizing to new images, as shown by its validation peaks (96.65% in epoch 12) and test (95.51%) results being better than its training results (91.29%). This suggests that the patterns learned from the diverse ImageNet dataset work surprisingly well even for something as different as Lego brick classification.
+What's really interesting is that the VGG16 model not only got higher accuracy but also did better at generalizing to new images, as shown by its validation peaks (97.10% in epoch 30) and test (96.58%) results being better than its training results (93.40%). This suggests that the patterns learned from the diverse ImageNet dataset work surprisingly well even for something as different as Lego brick classification.
 
 ### Limitations
 
-We did not perform hyperparameter optimization for either model, instead using fixed configurations based on common practices. We implemented early stopping with a patience of 8 epochs to prevent overfitting. Additionally, we limited our exploration to specific architectures: a basic CNN and VGG16 transfer learning, without comparing against other model architectures or transfer learning approaches. 
+We did not perform hyperparameter optimization for either model, instead using fixed configurations based on common practices. We implemented early stopping with a patience of 8 epochs to prevent overfitting. Additionally, we limited our exploration to two specific architectures.
 
 Although our initial experiments with data augmentation showed better validation results without augmentation, further experimentation with different augmentation strategies (such as more targeted transformations specific to the Lego domain) might further improve results. Similarly, more extensive fine-tuning of the VGG16 layers might yield even better performance. These limitations present opportunities for future work to further improve performance on the Lego classification task.
 
