@@ -1,7 +1,7 @@
 [project]
-name = "visual-exam"
+name = "visual-analytics"
 version = "1.0.0"
-description = "Visual Analytics exam project implementing computer vision techniques including image search, feature extraction, and analysis. Built with Python 3.12 and OpenCV, demonstrating practical applications through progressive assignments."
+description = "Visual Analytics exam project implementing computer vision techniques including image search, feature extraction, and analysis."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [

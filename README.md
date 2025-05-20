@@ -40,9 +40,8 @@ chmod +x run.sh
 
 This script will:
 1. Check if the environment is set up, and run setup if needed
-2. Check for required datasets and offer to download them automatically if missing
-3. Present an interactive menu to select and run any assignment
-4. Display the output with clear section markers
+2. Present an interactive menu to select and run any assignment
+3. Display and point to results after an assignment is run.
 
 **Note:** The interactive assignment runner executes all assignments with their default configurations only. For customized runs with different parameters, please refer to the "Manual Setup and Running" section below or the assignment-specific READMEs.
 
