@@ -17,17 +17,6 @@ The project is organized into multiple assignments, each focusing on different a
 
 ## Quickstart
 
-Clone the repository and install the required packages:
-
-```bash
-# Clone the repository
-git clone <repository-url>
-cd <repository-directory>
-
-# Install dependencies
-uv sync
-```
-
 Use the interactive assignment runner:
 
 ```bash
