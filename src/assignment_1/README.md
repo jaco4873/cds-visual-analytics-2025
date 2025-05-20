@@ -5,6 +5,12 @@ This project implements two different image search algorithms to find visually s
 1. **Histogram-based Search**: Uses color histograms from OpenCV to compare image similarity
 2. **Embedding-based Search**: Uses deep learning embeddings from a pre-trained VGG16 model to compare image similarity
 
+## Data
+The project uses the 17 Category Flower Dataset from the Visual Geometry Group at the University of Oxford. This dataset contains over 1000 images of flowers spanning 17 different species. The full dataset can be accessed from the [official website](https://www.robots.ox.ac.uk/~vgg/data/flowers/17/index.html).
+
+**Note**: The dataset will be automatically downloaded using a the `download_data.py` module when running the assignment through the assignment runner if it's not already present. You don't need to manually download the dataset.
+
+
 ## Quickstart
 
 The simplest way to run the assignment is using the provided run.sh script:
@@ -15,7 +21,7 @@ Then select option 1 from the menu.
 
 Note: This will ALSO ask you whether you want to download the data, if you do not have it in the correct folder.
 
-You can also run the code without relying on run.sh:
+You can also run the code without relying on run.sh, but only if you already have download the dataset.
 
 ```bash
 cd src
@@ -23,7 +29,7 @@ uv run -m assignment_1.main
 ```
 
 The will:
-- Check for the flower dataset and download it automatically if missing
+- Check for the flower dataset and **download it automatically** if missing
 - Load the flower dataset (default: `data/17flowers`)
 - Compare images to the target image (default: `image_0001.jpg`)
 - Find similar images (default: 5) based on the chosen comparison method(s)
@@ -69,12 +75,6 @@ assignment_1/
     ├── histogram_search.py    # Histogram search implementation
     └── embedding_search.py    # Embedding search implementation
 ```
-
-## Dataset
-The project uses the 17 Category Flower Dataset from the Visual Geometry Group at the University of Oxford. This dataset contains over 1000 images of flowers spanning 17 different species. The full dataset can be accessed from the [official website](https://www.robots.ox.ac.uk/~vgg/data/flowers/17/index.html).
-
-**Note**: The dataset will be automatically downloaded when running the assignment if it's not already present. You don't need to manually download and extract the dataset unless you want to prepare it beforehand.
-
 
 ## Implementation Details
 

@@ -1427,7 +1427,7 @@ wheels = [
 ]
 
 [[package]]
-name = "visual-exam"
+name = "visual-analytics"
 version = "1.0.0"
 source = { virtual = "." }
 dependencies = [

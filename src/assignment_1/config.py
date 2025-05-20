@@ -56,7 +56,7 @@ class EmbeddingSearchConfig(BaseSearchConfig):
     pooling: str = "avg"
     include_top: bool = False
 
-
 # Default configuration instances
+base_config = BaseSearchConfig()
 histogram_config = HistogramSearchConfig()
 embedding_config = EmbeddingSearchConfig()

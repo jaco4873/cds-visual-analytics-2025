@@ -3,8 +3,18 @@ set -e
 
 # Check if setup has already been run
 if [ ! -d ".venv" ]; then
-    echo "⚠️ Virtual environment not found."
-    read -p "Do you want to run the setup script now? [Y/n]: " run_setup
+    echo ""
+    echo "╔═════════════════════════════════════════════════════════╗"
+    echo "║  🎉  W E L C O M E  T O  V I S U A L  A N A L Y T I C S ║"
+    echo "╠═════════════════════════════════════════════════════════╣"
+    echo "║           (\_/)                                         ║"
+    echo "║          (>‿◠)♡     First time setup needed!            ║"
+    echo "║           / |       Let's get your environment          ║"
+    echo "║          /  \       ready for analysis!                 ║"
+    echo "║                                                         ║"
+    echo "║          [Y] Yes, set up now     [n] No, exit           ║"
+    echo "╚═════════════════════════════════════════════════════════╝"
+    read -p " → Your choice [Y/n]: " run_setup
     
     if [[ "$run_setup" == "" || "$run_setup" == "y" || "$run_setup" == "Y" ]]; then
         echo "🔄 Running initial setup..."
@@ -56,6 +66,20 @@ show_assignment_footer() {
     echo ""
 }
 
+# Add this function near the top of the file with other display functions
+show_dataset_missing() {
+    local dataset=$1
+    local message=$2
+    
+    echo ""
+    echo "┌─────────────────────────────────────────────┐"
+    echo "│  📦  Dataset Required: $dataset              │"
+    echo "└─────────────────────────────────────────────┘"
+    echo ""
+    echo "$message"
+    echo ""
+}
+
 # Run the selected assignment
 run_assignment() {
     case $1 in
@@ -63,11 +87,22 @@ run_assignment() {
             show_assignment_header $1
             echo "🚀 Running Assignment 1 with default configuration..."
             
-            # Check and download dataset if needed
-            (cd src/assignment_1 && ./check_and_download_data.sh)
-            if [ $? -ne 0 ]; then
-                show_assignment_footer $1
-                return
+            # Check if flower dataset directory exists
+            if [ ! -d "data/17flowers" ]; then
+                show_dataset_missing "Flowers" "The 17 category flower dataset is required for this assignment."
+                
+                read -p "Do you want to download the dataset now? [Y/n]: " download_choice
+                if [[ "$download_choice" == "" || "$download_choice" == "y" || "$download_choice" == "Y" ]]; then
+                    (cd src && PYTHONPATH=. uv run -m assignment_1.scripts.download_data)
+                    if [ $? -ne 0 ]; then
+                        show_assignment_footer $1
+                        return
+                    fi
+                else
+                    echo "❌ Dataset download declined. Cannot proceed without dataset."
+                    show_assignment_footer $1
+                    return
+                fi
             fi
             
             (cd src && uv run -m assignment_1.main)
@@ -85,8 +120,7 @@ run_assignment() {
             
             # Check if Lego dataset directory exists
             if [ ! -d "data/lego" ]; then
-                echo "⚠️ Lego dataset not found in data/lego directory."
-                echo "Please download the Lego dataset from UCloud and place it in the data/lego directory."
+                show_dataset_missing "Lego" "Please download the Lego dataset from UCloud and place it in the data/lego directory."
                 show_assignment_footer $1
                 return
             fi
@@ -100,9 +134,7 @@ run_assignment() {
             
             # Check if newspaper dataset directory exists
             if [ ! -d "data/newspapers/images" ]; then
-                echo "⚠️ Newspaper dataset not found in data/newspapers/images directory."
-                echo "Please download the Swiss newspapers dataset from Zenodo and place it in the data/newspapers/images directory."
-                echo "Dataset URL: https://zenodo.org/records/3706863"
+                show_dataset_missing "Newspapers" "Please download the Swiss newspapers dataset from Zenodo and place it in the data/newspapers/images directory.\nDataset URL: https://zenodo.org/records/3706863"
                 show_assignment_footer $1
                 return
             fi
