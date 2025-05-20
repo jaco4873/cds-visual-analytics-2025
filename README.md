@@ -6,9 +6,9 @@ This repository contains the exam project for the Visual Analytics course, imple
 
 The project is organized into multiple assignments, each focusing on different aspects of visual analytics:
 
-- **Assignment 1**: Simple image search algorithm using color histograms
+- **Assignment 1**: Image search algorithm using color histograms and embedding
 - **Assignment 2**: Image classification benchmarks with Logistic Regression and Neural Networks
-- **Assignment 3**: Transfer learning with pretrained CNNs for Lego brick classification
+- **Assignment 3**: Transfer learning with CNNs for Lego brick classification
 - **Assignment 4**: Face detection
 
 ## Quickstart
@@ -56,7 +56,6 @@ chmod +x setup.sh
 ./setup.sh
 ```
 
-### Executing without using run.sh
 
 After setup, you can run individual assignments:
 
