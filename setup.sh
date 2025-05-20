@@ -93,7 +93,7 @@ else
         echo "📦 Using apt package manager"
         sudo apt-get update
         if [[ "$OPENCV_INSTALLED" == false || "$TESSERACT_INSTALLED" == false ]]; then
-            sudo apt-get install -y tesseract-ocr libtesseract-dev
+            sudo apt-get install -y tesseract-ocr libtesseract-dev libgl1
         fi
     else
         # This will trigger for macOS without Homebrew or Linux without apt-get

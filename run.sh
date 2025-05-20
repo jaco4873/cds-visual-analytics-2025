@@ -17,8 +17,7 @@ if [ ! -d ".venv" ]; then
     
     if [[ "$run_setup" == "" || "$run_setup" == "y" || "$run_setup" == "Y" ]]; then
         echo "🔄 Running initial setup..."
-        bash ./setup.sh
-        
+        source ./setup.sh
         source .venv/bin/activate
 
     else
