@@ -125,6 +125,7 @@ As shown in the comparison visualization above,  GDL and JDG followed similar tr
 #### The Impartial (IMP, 1881-2017)
 
 IMP shows a distinctive pattern:
+
 - Starting with 0% in the 1880s, faces appear in around 8% of pages in the 1890s
 - Early 1900s shows relatively low percentages (5-6%)
 - A significant jump occurs in the 1910s-1920s, reaching around 20%
@@ -136,8 +137,8 @@ IMP shows a distinctive pattern:
 #### The Gazette de Lausanne (GDL, 1804-1991)
 
 For GDL, the results indicate:
+
 - The earliest periods (1790s-1850s) show minimal face detection (0-3%) which we can interpret as being false positives, as the first photography was used in print media in 1848 ("Photojournalism", Wikipedia 2025).
-- 
 - No faces detected from 1840s through 1890s
 - A clear emergence starting in the 1900s (13%)
 - Consistent presence in the 1910s-1930s (10-11%)
@@ -148,6 +149,7 @@ For GDL, the results indicate:
 #### The Journal de Genève (JDG, 1826-1994)
 
 JDG shows a gradual adoption of facial imagery:
+
 - No faces detected prior to the 1870s
 - Initial appearance in the 1870s at very low levels (2%)
 - Steady increase through the late 19th century (6% by 1890s)
@@ -171,8 +173,6 @@ These patterns reflect several important developments:
 
 
 It's worth noting that our dataset shows an uneven distribution of pages across decades, with more pages available from recent decades. This reflects the changing volume of newspaper production over time but may also influence the reliability of our decade-to-decade comparisons.
-
-
 
 ## Limitations
 
