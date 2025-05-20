@@ -180,3 +180,4 @@ cython_debug/
 .cursorrules
 eisvogel.tex
 files.txt
+*.zip
