@@ -18,7 +18,7 @@ This project uses the Swiss newspapers corpus from [this Zenodo dataset](https:/
 - 1982 newspaper pages from the Journal de Genève (1820s-1990s)
 - 1634 newspaper pages from the Impartial (1880s-2010s)
 
-The images should be located at `data/newspapers/images/` and organized into three subfolders (GDL, JDG, IMP) corresponding to each newspaper.
+The images should placed in `data/newspapers/images/` and organized into three subfolders (GDL, JDG, IMP) corresponding to each newspaper.
 
 ## Quickstart
 

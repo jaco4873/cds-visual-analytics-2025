@@ -11,6 +11,10 @@ The project is organized into multiple assignments, each focusing on different a
 - **Assignment 3**: Transfer learning with CNNs for Lego brick classification
 - **Assignment 4**: Face detection
 
+## Data Setup
+
+**Important:** Assignments includes guides on how to obtain the necessary datasets where relevant. All data should be placed in the top-level `/data` directory (outside the `/src` directory). Refer to each assignment's README for specific subdirectory structure, data requirements and download instructions.
+
 ## Quickstart
 
 Clone the repository and install the required packages:
