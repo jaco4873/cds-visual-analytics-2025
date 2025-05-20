@@ -45,6 +45,15 @@ check_dependencies() {
         OPENCV_INSTALLED=false
     fi
     
+    # Check for OpenGL library required by OpenCV
+    if [ -e /usr/lib/libGL.so.1 ] || [ -e /usr/lib64/libGL.so.1 ]; then
+        echo "✅ OpenGL library is already installed"
+        OPENGL_INSTALLED=true
+    else
+        echo "⚠️ OpenGL library (libGL.so.1) is missing"
+        OPENGL_INSTALLED=false
+    fi
+    
     # Check for Tesseract
     if command -v tesseract &> /dev/null; then
         echo "✅ Tesseract is already installed"
@@ -53,8 +62,8 @@ check_dependencies() {
         TESSERACT_INSTALLED=false
     fi
     
-    # Return true if both are installed
-    if [[ "$OPENCV_INSTALLED" == true && "$TESSERACT_INSTALLED" == true ]]; then
+    # Return true if all are installed
+    if [[ "$OPENCV_INSTALLED" == true && "$TESSERACT_INSTALLED" == true && "$OPENGL_INSTALLED" == true ]]; then
         return 0
     else
         return 1
