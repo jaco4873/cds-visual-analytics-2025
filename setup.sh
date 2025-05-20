@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-set -e
-
 echo "🚀 Starting Visual Analytics setup..."
 
 # Detect the operating system

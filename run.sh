@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -e
 
 # Check if setup has already been run
 if [ ! -d ".venv" ]; then
@@ -19,6 +18,9 @@ if [ ! -d ".venv" ]; then
     if [[ "$run_setup" == "" || "$run_setup" == "y" || "$run_setup" == "Y" ]]; then
         echo "🔄 Running initial setup..."
         bash ./setup.sh
+        
+        source .venv/bin/activate
+
     else
         echo "❌ Setup declined. Cannot proceed without virtual environment."
         echo "You can run setup manually later with: ./setup.sh"
