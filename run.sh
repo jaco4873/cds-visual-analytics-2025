@@ -88,8 +88,8 @@ run_assignment() {
             show_assignment_header $1
             echo "🚀 Running Assignment 1 with default configuration..."
             
-            # Check if flower dataset directory exists
-            if [ ! -d "data/17flowers" ]; then
+            # Check if flower dataset directory exists and has images
+            if [ ! -d "data/17flowers" ] || [ $(find "data/17flowers" -name "image_*.jpg" | wc -l) -eq 0 ]; then
                 show_dataset_missing "Flowers" "The 17 category flower dataset is required for this assignment."
                 
                 read -p "Do you want to download the dataset now? [Y/n]: " download_choice

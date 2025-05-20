@@ -22,12 +22,12 @@ The images should placed in `data/newspapers/images/` and organized into three s
 
 ## Quickstart
 
-Run the main script to process the newspaper images and generate the analysis:
-
 The simplest way to run the assignment is using the provided run.sh script:
+
 ```bash
 ./run.sh
 ```
+
 Then select option 4 from the menu.
 
 Alternatively, you can run assignment 4 without run.sh as a module:
@@ -42,16 +42,14 @@ uv run -m assignment_4.main
 # Process only a specific newspaper
 uv run -m assignment_4.main --newspaper GDL
 
-# Specify custom data and output directories
-uv run -m assignment_4.main --data-dir /path/to/data --output-dir /path/to/output
 ```
 ## Configuration
 
 The project uses a central configuration system in `config.py` that can be modified to customize various aspects:
 
-- **Face Detection Configuration**: Control MTCNN model parameters including detection thresholds, minimum face size, and scale factor
-- **Data Configuration**: Set data directory paths and specify which newspapers to analyze
-- **Output Configuration**: Define output directory paths for saving results and visualizations
+- Face Detection Configuration: Control MTCNN model parameters including detection thresholds, minimum face size, and scale factor
+- Data Configuration: Set data directory paths and specify which newspapers to analyze
+- Output Configuration: Define output directory paths for saving results and visualizations
 
 ### Command Line Options
 
@@ -81,22 +79,22 @@ assignment_4/
 
 The analysis follows these steps:
 
-1. **Data Loading**: Load newspaper images from the dataset.
-2. **Year Extraction**: Extract the year of publication from each filename.
-3. **Face Detection**: Use MTCNN to detect faces in each newspaper page.
-4. **Decade Aggregation**: Group results by decade to analyze temporal trends.
-5. **Visualization**: Create plots showing the percentage of pages with faces over time.
+1. Data Loading: Load newspaper images from the dataset.
+2. Year Extraction: Extract the year of publication from each filename.
+3. Face Detection: Use MTCNN to detect faces in each newspaper page.
+4. Decade Aggregation: Group results by decade to analyze temporal trends.
+5. Visualization: Create plots showing the percentage of pages with faces over time.
 
 ## Results
 
 The analysis produces the following outputs:
 
-1. **CSV Files**:
+1. CSV Files:
    - Individual CSV files for each newspaper showing face count and percentage by decade
    - A combined CSV with results from all newspapers
    - Summary statistics
 
-2. **Visualizations**:
+2. Visualizations:
    - Individual plots for each newspaper showing percentage of pages with faces by decade
    - A comparison plot showing trends across all newspapers
 
@@ -110,13 +108,13 @@ After running our face detection analysis with adjusted thresholds on the three 
 
 ### Overall Trends
 
-The late 19th century saw newspapers gradually containing more and more faces, mirroring the technologic development in society where photography became more and more common
+The late 19th century saw newspapers starting the adoption of photography (with faces) in print media. 
 
 Looking at the data chronologically:
 - Pre-1850s: Minimal to no faces detected, consistent with the technological limitations of the era
 - 1850s-1900s: Gradual introduction of faces, corresponding to early photography adoption in newspapers
 - 1900s-1950s: Steady increase as photo reproduction techniques improved
-- 1950s-2010s: Dramatic rise reflecting modern visual journalism
+- 1950s-2010s: Dramatic rise, hinting towards a modern visual journalism
 
 ![Newspaper Comparison](output/plots/newspaper_comparison.png)
 
@@ -133,23 +131,23 @@ IMP shows a distinctive pattern:
 - The percentage stabilizes around 18-22% through the 1930s
 - A noticeable jump to 36% in the 1950s
 - After some fluctuation in mid-century, there's a dramatic increase in the late 20th/early 21st century
-- The most recent periods show extraordinary prevalence - reaching over 65% in the 2000s and exceeding 70% in the 2010s
+- The most recent periods show high prevalence - reaching over 65% in the 2000s and exceeding 70% in the 2010s
 
 #### The Gazette de Lausanne (GDL, 1804-1991)
 
 For GDL, the results indicate:
-- The earliest periods (1790s-1850s) show minimal face detection (0-3%) which we can interpret as being false positives despite we adjusted the detection thresholds upwards from the defaults.  The first photo in a newspaper was published in 1848.
+- The earliest periods (1790s-1850s) show minimal face detection (0-3%) which we can interpret as being false positives, as the first photography was used in print media in 1848 ("Photojournalism", Wikipedia 2025).
+- 
 - No faces detected from 1840s through 1890s
 - A clear emergence starting in the 1900s (13%)
 - Consistent presence in the 1910s-1930s (10-11%)
 - Slight decline in mid-century (8-6%)
 - The percentages increase significantly in the 1980s-1990s (20-26%)
 
-These results give reason to wonder how reliable the face detection algorithms is throughout, and whether the chosen detection thresholds are too restrictive.
 
 #### The Journal de Genève (JDG, 1826-1994)
 
-JDG demonstrates a gradual adoption of facial imagery:
+JDG shows a gradual adoption of facial imagery:
 - No faces detected prior to the 1870s
 - Initial appearance in the 1870s at very low levels (2%)
 - Steady increase through the late 19th century (6% by 1890s)
@@ -160,48 +158,32 @@ JDG demonstrates a gradual adoption of facial imagery:
 - Slight decrease in the 1990s (19.8%)
 
 JDG's pattern shows a more consistent, gradual increase compared to the other newspapers, with fewer dramatic shifts between decades.
-From a non-domain experts perspective, this gradual increase seems plausible and speaks in favour of the model configuration.
 
 ### Historical Context and Significance
 
 These patterns reflect several important developments:
 
-1. **Technological Evolution**: The introduction of photography and improvements in printing technology made it increasingly feasible and affordable to include images in newspapers, clearly visible in the minimal detection before 1870s and gradual increase thereafter.
+1. Technological Evolution: The introduction of photography made it increasingly feasible and affordable to include images in newspapers, clearly visible in the minimal detection before 1870s and gradual increase thereafter ("Photojournalism", Wikipedia 2025).
 
-2. **Cultural Transformation**: The increasing prevalence of faces reflects a fundamental shift in how news was presented - from dense text toward pages with a stronger visual appeal.
+2. Modern Visual Culture: The dramatic increase in the most recent decades (particularly for IMP exceeding 70% by the 2010s) mirrors broader cultural shifts toward visual media 
 
-3. **Regional Differences**: The significant difference between IMP and the other two newspapers might reflect different editorial philosophies or regional preferences. IMP shows a notable early adoption in the 1910s-1920s (20%) and dramatically accelerated use by the 1950s (36%), while GDL and JDG followed more conservative trajectories.
+3. Regional Differences: The significant difference between IMP and the other two newspapers might reflect different editorial philosophies or regional preferences. IMP shows a notable early adoption in the 1910s-1920s (20%) and dramatically accelerated use by the 1950s (36%), while GDL and JDG followed more conservative trajectories.
 
-4. **Modern Visual Culture**: The dramatic increase in the most recent decades (particularly for IMP exceeding 70% by the 2010s) mirrors broader cultural shifts toward visual media and personality-focused journalism.
 
 It's worth noting that our dataset shows an uneven distribution of pages across decades, with more pages available from recent decades. This reflects the changing volume of newspaper production over time but may also influence the reliability of our decade-to-decade comparisons.
 
-This analysis provides a quantitative glimpse into the visual transformation of print media, showing how newspapers evolved from text-heavy documents to increasingly visual platforms that prominently feature human faces. The trend accelerated dramatically in the late 20th and early 21st centuries, suggesting a fundamental shift in how information is communicated and consumed.
+
 
 ## Limitations
 
 This analysis has several limitations to consider:
 
-1. **Model Training Data**: MTCNN was only trained on modern photographs, making it prone to misdetecting other objects as faces in historical materials.
-2. **Image Quality**: Historical newspaper scans vary in quality, affecting face detection accuracy.
-3. **Historical Context**: Changes in newspaper formats, layouts, and content focus over time might influence results.
-4. **Temporal Distribution**: Uneven distribution of pages across time periods may affect decade-to-decade comparisons.
-5. **Detection Thresholds**: Analysis required adjusted confidence thresholds ([0.7, 0.9, 0.9] vs default [0.6, 0.7, 0.7]) to reduce false positives. This adjustment was based on visual inspection rather than systematic optimization.
-6. **Model Selection**: We exclusively used MTCNN. Other face detection algorithms might perform differently on historical materials.
-7. **Qualitative Analysis**: Our analysis counts faces but doesn't distinguish between photographs, illustrations, or engravings, nor considers face size, placement, or prominence.
-8. **Lack of Ground Truth**: Without manually annotated historical newspaper data, we couldn't quantitatively evaluate detection performance across different eras.
-## Requirements
-
-This project requires the following Python packages:
-
-- torch
-- facenet-pytorch
-- PIL
-- pandas
-- matplotlib
-- numpy
-- pydantic-settings
-- click
+1. Model Training Data: MTCNN was only trained on modern photographs, making it prone to misdetecting other objects as faces in historical materials. Other face detection algorithms might perform differently on historical materials.
+2. Image Quality: Historical newspaper scans vary in quality, affecting face detection accuracy.
+3. Temporal Distribution: Uneven distribution of pages across time periods may affect decade-to-decade comparisons.
+4. Detection Thresholds: Analysis required adjusted confidence thresholds ([0.7, 0.9, 0.9] vs default [0.6, 0.7, 0.7]) to reduce false positives. This adjustment was based on visual inspection rather than systematic optimization.
+5. Qualitative Analysis: Our analysis counts faces but doesn't distinguish between photographs, illustrations, or engravings, nor considers face size, placement, or prominence.
+6. Lack of Ground Truth: Without manually annotated historical newspaper data, we couldn't quantitatively evaluate detection performance across different eras.
 
 ## Credits
 
@@ -210,4 +192,4 @@ This project was created as part of the Cultural Data Science - Visual Analytics
 - Dataset: Swiss newspapers corpus from [Zenodo](https://zenodo.org/records/3706863)
 - Face detection: [FaceNet-PyTorch](https://github.com/timesler/facenet-pytorch) implementation of MTCNN
 - Note in MTCNN training on modern photographs: [FaceNet: A unified embedding for face recognition and clustering](https://ieeexplore.ieee.org/document/7298682)
-
+- First photography in newspaper: [Wikipedia](https://en.wikipedia.org/wiki/Photojournalism)

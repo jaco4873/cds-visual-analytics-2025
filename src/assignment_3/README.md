@@ -1,11 +1,20 @@
 # Assignment 3: Transfer Learning with Pretrained CNNs
 
 ## Overview
+
 This assignment implements two approaches for classifying Lego brick images:
+
 1. A custom CNN trained directly on the image data
-2. A transfer learning approach using VGG16 as a feature extractor
+2. A transfer learning approach using a pre-trained VGG16
 
 The goal is to compare these two approaches and determine whether transfer learning improves performance for this specific image classification task.
+
+## Dataset
+
+- The dataset consists of images of various Lego bricks arranged in folders named after the brick type. 
+- We use only the data from the `data/lego/cropped` folder, which contains images with backgrounds removed 
+- The data should be placed in the `data/lego/cropped/*` directory. 
+
 
 ## Quickstart
 
@@ -23,16 +32,7 @@ cd src
 
 # Run as module
 uv run python -m assignment_3.main 
-
-# With custom arguments
-uv run python -m assignment_3.main --data-dir /path/to/lego/data --output-dir /path/to/output
 ```
-
-## Dataset
-- Source and format: The dataset consists of images of various Lego bricks arranged in folders named after the brick type. 
-- The data should be placed in the `data/lego/` directory. 
-- We use the data from the `data/lego/cropped` folder, which contains images with backgrounds removed - to be specific, there should be folders with subdirectories with images as: `data/lego/cropped/*`
-
 
 ## Configuration
 
@@ -52,6 +52,7 @@ All settings are managed through Pydantic classes, making it easy to modify beha
 - `--vgg16-only`: Train only the VGG16 model
 
 ## Project Structure
+
 ```
 src/assignment_3/
 ├── config.py                    # Configuration settings
@@ -148,21 +149,20 @@ This performance difference shows transfer learning's effectiveness in classific
 
 The custom CNN showed a somewhat uneven learning curve with fluctuations in validation metrics, though with an overall positive trajectory. The training accuracy steadily increased to 95.58% by the final epoch, while validation accuracy peaked at 86.16% in epoch 25 before declining slightly, triggering early stopping. This growing gap between training and validation metrics indicates the model was beginning to overfit to the training data.
 
+![Custom CNN Learning Curves](output/cnn/learning_curves.png)
+*Figure 1: Training and validation loss/accuracy curves for the custom CNN model*
+
 The VGG16 model exhibited better learning with some fluctuations in validation accuracy but an overall stronger trajectory. By epoch 8, it had already achieved validation accuracy above 93%. The final validation accuracy of 97.10% actually exceeds the training accuracy of 93.40%, and this pattern continues with the test accuracy of 96.58% - a sign of excellent generalization across all three data splits.
 
-The big difference in performance between the two models shows why transfer learning works so well for specific image tasks like this one. By using VGG16's pre-trained weights from ImageNet, our model started with ready-made feature detectors that could already spot important patterns in Lego bricks - things like edges, colors, textures, and shapes. By fine-tuning just the last 4 convolutional layers, we let the model adapt these general features to the specific characteristics of Lego bricks.
+![VGG16 Transfer Learning Curves](output/vgg16/learning_curves.png)
+*Figure 2: Training and validation loss/accuracy curves for the VGG16 transfer learning model*
 
-What's really interesting is that the VGG16 model not only got higher accuracy but also did better at generalizing to new images, as shown by its validation peaks (97.10% in epoch 30) and test (96.58%) results being better than its training results (93.40%). This suggests that the patterns learned from the diverse ImageNet dataset work surprisingly well even for something as different as Lego brick classification.
+The big difference in performance between the two models shows why transfer learning works so well for specific image tasks like this one. By using VGG16's pre-trained weights from ImageNet, our model started with ready-made feature detectors that could seemingly already spot patterns in Lego bricks - things like edges, colors, textures, and shapes. By fine-tuning just the last 4 convolutional layers, we let the model adapt these general features to the specific characteristics of Lego bricks.
+
+The jaggedness visible in both models' validation curves (particularly pronounced in the CNN model) is likely due to the relatively small validation set. These fluctuations are a common challenge in ML practice and directly influenced the training setup - specifically, the early stopping patience was increased from 5 to 8 epochs to prevent prematurely halting training during these unstable periods. This adjustment allowed both models to reach more stable performance in later epochs, providing more reliable results for our comparison.
 
 ### Limitations
 
-We did not perform hyperparameter optimization for either model, instead using fixed configurations based on common practices. We implemented early stopping with a patience of 8 epochs to prevent overfitting. Additionally, we limited our exploration to two specific architectures.
+We did not perform hyperparameter optimization for either model, instead using fixed configurations. We implemented early stopping with a patience of 8 epochs to prevent overfitting. Additionally, we limited our exploration to two specific architectures.
 
 Although our initial experiments with data augmentation showed better validation results without augmentation, further experimentation with different augmentation strategies (such as more targeted transformations specific to the Lego domain) might further improve results. Similarly, more extensive fine-tuning of the VGG16 layers might yield even better performance. These limitations present opportunities for future work to further improve performance on the Lego classification task.
-
-## Requirements
-- TensorFlow 2.x
-- NumPy
-- Matplotlib
-- scikit-learn
-- Pydantic

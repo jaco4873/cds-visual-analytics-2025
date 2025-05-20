@@ -2,13 +2,14 @@
 
 ## Overview
 This project implements two different image search algorithms to find visually similar images:
+
 1. **Histogram-based Search**: Uses color histograms from OpenCV to compare image similarity
-2. **Embedding-based Search**: Uses deep learning embeddings from a pre-trained VGG16 model to compare image similarity
+2. **Embedding-based Search**: Use embeddings obtained from a pre-trained VGG16 model to compare image similarity using cosine similarity.
 
 ## Data
 The project uses the 17 Category Flower Dataset from the Visual Geometry Group at the University of Oxford. This dataset contains over 1000 images of flowers spanning 17 different species. The full dataset can be accessed from the [official website](https://www.robots.ox.ac.uk/~vgg/data/flowers/17/index.html).
 
-**Note**: The dataset will be automatically downloaded using a the `download_data.py` module when running the assignment through the assignment runner if it's not already present. You don't need to manually download the dataset.
+**Note**: The dataset will be automatically downloaded using the `download_data.py` module when running the assignment through the assignment runner. You don't need to manually download the dataset. 
 
 
 ## Quickstart
@@ -19,9 +20,9 @@ The simplest way to run the assignment is using the provided run.sh script:
 ```
 Then select option 1 from the menu.
 
-Note: This will ALSO ask you whether you want to download the data, if you do not have it in the correct folder.
+Note: This will prompt whether you want to download the data. Click "Y". to continue.
 
-You can also run the code without relying on run.sh, but only if you already have download the dataset.
+You can also run the code without relying on run.sh, but only if you already have downloaded the dataset and placed it in  `data/17flowers`.
 
 ```bash
 cd src
@@ -29,23 +30,20 @@ uv run -m assignment_1.main
 ```
 
 The will:
+
 - Check for the flower dataset and **download it automatically** if missing
 - Load the flower dataset (default: `data/17flowers`)
 - Compare images to the target image (default: `image_0001.jpg`)
 - Find similar images (default: 5) based on the chosen comparison method(s)
-- Save results to output path:
-  - Histogram results: `assignment_1/output/histogram_results.csv`
-  - Embedding results: `assignment_1/output/embedding_results.csv`
-
-
+- Save results to output path
 
 ## Configuration
-The parameters are defined in `config.py` using a hierarchy of Pydantic BaseSettings classes, which provides validation of configuration values:
+The configuration of the models and assignment is defined in `config.py` using a hierarchy of Pydantic BaseSettings classes.
 
 You can modify the default values directly in the `config.py`.
 
 ### Command Line Options
-CLI commands allow you to control which search(es) you execute directly, bypassing the `config.py`.
+Additionally, CLI commands allow you to control which search(es) you execute directly, bypassing the `config.py`.
 
 You can specify which method to use with the `--method` option:
 
@@ -72,20 +70,24 @@ assignment_1/
 │   └── embedding_search_service.py   # Embedding-based search service
 └── scripts/                   # Search scripts
     ├── __init__.py
-    ├── histogram_search.py    # Histogram search implementation
-    └── embedding_search.py    # Embedding search implementation
+    ├── histogram_search.py    # Histogram search orchestrator
+    └── embedding_search.py    # Embedding search orchestrator
 ```
 
 ## Implementation Details
 
 ### Histogram-based Search
+
 This approach uses color histograms for image similarity comparison:
+
 1. **Color Histogram Extraction**: BGR color space histograms with 8 bins per channel
 2. **Comparison**: Chi-Square distance metric (`cv2.HISTCMP_CHISQR`)
 3. **Ranking**: Images ranked by histogram distance (lower = more similar)
 
 ### Embedding-based Search
+
 This approach uses deep learning embeddings for image similarity comparison:
+
 1. **Feature Extraction**: Pre-trained VGG16 model without top layers to extract image embeddings
 2. **Comparison**: Cosine similarity between embeddings
 3. **Ranking**: Images ranked by similarity score (higher = more similar)
@@ -93,14 +95,18 @@ This approach uses deep learning embeddings for image similarity comparison:
 ### Key Components
 
 #### `HistogramSearchService` Class
+
 This service class encapsulates the core functionality for histogram-based search:
+
 - **Initialization**: Sets up the search parameters including image directory, histogram bins, color space, and comparison method
 - **Histogram Extraction**: Processes all images in the dataset and stores their histograms
 - **Similar Image Search**: Compares the target image histogram with all others and returns the most similar ones
 - **Results Export**: Saves the search results to a CSV file
 
 #### `EmbeddingSearchService` Class
+
 This service class encapsulates the core functionality for embedding-based search:
+
 - **Initialization**: Sets up the VGG16 model with the specified parameters
 - **Feature Extraction**: Processes images to extract embeddings using the pre-trained model
 - **Similar Image Search**: Compares the target image embedding with all others using cosine similarity
@@ -134,16 +140,6 @@ Using VGG16 embeddings and cosine similarity (higher values indicate more simila
 | 5    | image_0017.jpg | 0.8376       |
 | 6    | image_0049.jpg | 0.8361       |
 
-What's particularly interesting is that manual inspection of these results revealed all the similar images are yellow daffodils. Unlike the histogram method which simply matched color patterns, the CNN approach recognized the specific flower species in the image. This nicely illustrates how convolutional neural networks can capture semantic content and object categories rather than just low-level visual features.
+What's particularly interesting is that manual inspection of these results revealed all the similar images are yellow daffodils. Unlike the histogram method which simply matched color patterns, the CNN approach recognized the specific flower species in the image. This nicely illustrates how convolutional neural networks can capture a wider range of structural features rather than just low-level visual features.
 
 These results show how different feature extraction methods can yield different notions of similarity. The histogram-based approach focuses more on color distribution, while the embedding-based approach captures higher-level semantic features, resulting in completely different sets of similar images.
-
-## Requirements
-- Python 3.12+
-- OpenCV
-- TensorFlow
-- NumPy
-- Scikit-learn
-- Pandas
-- Matplotlib
-- Click

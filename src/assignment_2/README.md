@@ -13,7 +13,7 @@ The simplest way to run the assignment is using the provided run.sh script:
 ```
 Then select option 2 from the menu.
 
-**Note:** Using the run.sh script will execute the assignment with default configurations only. For customized runs with different parameters, see the Advanced Execution Options section below.
+**Note:** Using the run.sh script will execute the assignment with default configurations only. For customized runs with different parameters, see the Configuration section below.
 To run the assignment without run.sh, navigate to the src directory and execute:
 
 ```bash
@@ -21,9 +21,9 @@ cd src
 uv run python -m assignment_2.main
 ```
 
-#### Customizing Configuration
+#### Configuration
 
-There are two ways to customize the configuration:
+There are two ways to customize the configuration parameters:
 
 1. **Edit config.py:** Modify the default configuration values directly in the `config.py` file.
 2. **Use command line options:** Override specific settings using command line flags when running the script.
@@ -33,7 +33,6 @@ The main.py script accepts the following commands:
 
 ```
 --model  Which model to run [logistic_regression, neural_network, both]
-         If not specified, uses the value from config.py (default: "both")
 ```
 
 Example usage:
@@ -68,7 +67,7 @@ Note: This project also has dependencies on the shared_lib module which provides
 
 
 
-## Implementation Overview
+## Architecture Overview
 
 The implementation follows a modular architecture with the following components:
 
@@ -76,33 +75,38 @@ The implementation follows a modular architecture with the following components:
 - **Model Training**: Training both Logistic Regression and Neural Network classifiers
 - **Evaluation**: Generating classification reports, confusion matrices, and performance metrics
 - **Visualization**: Plotting loss curves (for Neural Network)
-- **Configuration-Based**: Uses Pydantic models for flexible configuration
+- **Configuration module**: Uses Pydantic models for flexible configuration
 
-### Data Preprocessing (default settings)
+## Data
 
-1. Load the CIFAR-10 dataset using TensorFlow's keras.datasets
-2. Convert images to grayscale (optional)
-3. Normalize pixel values to [0, 1]
-4. Flatten the images to be compatible with scikit-learn classifiers
 
 ### Data Splitting
 
-It's worth noting how the data is split differently between the models:
+It's worth noting how the data splits are not identical when training each model:
 
 1. **Initial Split**: The CIFAR-10 dataset comes pre-divided into 50,000 training images and 10,000 test images.
 
-2. **Neural Network Classifier** (with early stopping enabled):
+2. **Logistic Regression Classifier**:
+   - Uses a simple two-way split
+   - Training set: All 50,000 training images
+   - Test set: 10,000 images (original test set)
+   - No validation set is needed since there's no early stopping mechanism
+
+3. **Neural Network Classifier** (with early stopping enabled):
    - Creates a three-way split of the data
    - Training set: 45,000 images (90% of original training data)
    - Validation set: 5,000 images (10% of original training data, controlled by validation_fraction parameter)
    - Test set: 10,000 images (original test set)
    - The validation set is created internally by scikit-learn's MLPClassifier and used to monitor performance for early stopping
 
-3. **Logistic Regression Classifier**:
-   - Uses a simple two-way split
-   - Training set: All 50,000 training images
-   - Test set: 10,000 images (original test set)
-   - No validation set is needed since there's no early stopping mechanism
+### Data Preprocessing
+
+1. Load the CIFAR-10 dataset using TensorFlow's keras.datasets
+2. Convert images to grayscale (optional)
+3. Normalize pixel values to [0, 1]
+4. Flatten the images to be compatible with scikit-learn classifiers
+
+## Model Overview
 
 ### Logistic Regression Classifier
 
@@ -115,7 +119,7 @@ The implementation uses scikit-learn's LogisticRegression with the following def
 Note that in scikit-learn's LogisticRegression:
 - `max_iter` refers to the maximum number of solver iterations for convergence (not epochs)
 - The solver will stop earlier if the model converges (when the improvement in loss is less than `tol`)
-- The actual number of iterations is typically lower than the maximum when convergence is reached
+- The actual number of iterations is typically lower than the maximum when convergence is reached (in our case, 121 iterations)
 
 ### Neural Network Classifier
 
@@ -156,33 +160,52 @@ The classifiers generate the following outputs in the specified output directory
 
 ## Results Analysis
 
-The experiments on the CIFAR-10 dataset yielded interesting findings:
+The experiments on the CIFAR-10 dataset shows significant performance differences between the two classification approaches. Analysis of both models demonstrates clear strengths and weaknesses when classifying different object categories.  Object categories with distinct structural features (vehicles) were consistently better classified across both models, while classes with variable appearances and postures (animals) presented greater challenges.
 
 ### Logistic Regression Classifier
-- Achieved an overall accuracy of 29.59% on the test set
-- Best performance on truck (40.28% F1-score) and automobile (36.84% F1-score) classes
-- Struggled most with cat (18.64% F1-score) and deer (20.83% F1-score) classes
-- Converged after 121 iterations with the saga solver
+- Achieved an overall accuracy of 29.59% on the test set, establishing a baseline performance
+- Best performance on vehicle classes: trucks (40.28% F1-score) and automobiles (36.84% F1-score)
+- Struggled significantly with animal classes, particularly cats (18.64% F1-score) and deer (20.83% F1-score)
+- Converged after 121 iterations with the saga solver, well before the maximum 1000 iterations limit
+- Training completed efficiently due to the relatively simple model architecture
+
+![Logistic Regression Confusion Matrix](output/LogisticRegressionClassifier_confusion_matrix.png)
+*Figure 1: Confusion matrix for the Logistic Regression classifier showing classification performance across the 10 CIFAR-10 classes. Diagonal elements represent correct classifications, while off-diagonal elements show misclassifications.*
 
 ### Neural Network Classifier
-- Achieved a significantly higher overall accuracy of 43.85%
-- Best performance on truck (51.44% F1-score), ship (51.24% F1-score), and automobile (50.58% F1-score) classes
-- Still struggled with cats (24.88% F1-score), suggesting this class is inherently challenging
-- Early stopping triggered after 50 iterations
+- Demonstrated substantially better performance with an overall accuracy of 43.85% (14.26% improvement over logistic regression)
+- Strongest classification performance on vehicles: trucks (51.44% F1-score), ships (51.24% F1-score), and automobiles (50.58% F1-score)
+- Despite improved performance overall, still struggled with cat classification (24.88% F1-score)
+- Early stopping triggered after 50 epochs (of maximum 200), indicating efficient convergence, though the loss curve suggests potential for further improvement
 
-Looking at both models, it's clear the neural network does a much better job with these complex images, even when converted to grayscale. It's interesting that cats were consistently the hardest class for both models to identify. I noticed vehicles (cars, trucks, ships) were the easiest to classify across both models.
+![Neural Network Confusion Matrix](output/NeuralNetworkClassifier_confusion_matrix.png)
+*Figure 2: Confusion matrix for the Neural Network classifier. Note the improved diagonal values compared to Logistic Regression, indicating better classification performance across most classes.*
 
-## Requirements
+![Neural Network Loss Curve](output/NeuralNetworkClassifier_loss_curve.png)
+*Figure 3: Loss curve showing the neural network's training progression over 50 epochs. The decreasing trend shows continuous improvement without plateauing, suggesting early stopping may have been triggered prematurely despite the model's potential for further optimization. However, the early stopping was triggered due to the accuracy on the validation data not increasing meaningfully over 10 epochs.*
 
-- Python 3.12
-- TensorFlow (for loading the CIFAR-10 dataset)
-- scikit-learn
-- matplotlib
-- numpy
-- OpenCV
-- pydantic
-- Click
+## Limitations
 
+Several important limitations affected the performance and scope of this classification work:
+
+### Data Preprocessing Limitations
+- Converting images to grayscale significantly reduces the information available to the models, particularly affecting classes distinguished by color (e.g., birds)
+- No data augmentation was implemented, limiting the models' ability to generalize across different object orientations and scales
+
+### Model Architecture Limitations
+- The logistic regression model assumes linear separability between classes, which is unrealistic for complex image data
+- The MLPClassifier implementation in scikit-learn lacks modern deep learning techniques like convolutions, which are specifically designed for image data
+- Both models are very simple compared to state-of-the-art computer vision approaches, explaining the relatively low accuracy.
+
+### Computational Constraints
+- Using scikit-learn's MLPClassifier without GPU acceleration limits the feasible model size and training time
+- The neural network parameters were constrained by computation time considerations rather than optimal performance
+- Hyperparameter tuning was limited, with only a single configuration tested for each model type
+
+### Evaluation Limitations
+- The evaluation metrics focus on classification accuracy without considering confidence scores or error analysis
+- No cross-validation was performed
+- No analysis of misclassified examples was conducted to identify potential improvements
 
 ## References
 

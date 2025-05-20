@@ -1,3 +1,17 @@
+---
+title: "Visual Analytics Portfolio"
+author: "Jacob Lillelund"
+date: "20 May 2025"
+titlepage: true
+titlepage-color: "003366"
+titlepage-text-color: "FFFFFF"
+titlepage-rule-color: "FFFFFF"
+titlepage-rule-height: 2
+toc-own-page: true
+monofont: "Menlo"
+fontsize: 12pt
+---
+
 # Visual Analytics Exam Project
 
 This repository contains the exam project for the Visual Analytics course, implementing various computer vision and image analysis techniques.
@@ -6,14 +20,21 @@ This repository contains the exam project for the Visual Analytics course, imple
 
 The project is organized into multiple assignments, each focusing on different aspects of visual analytics:
 
-- **Assignment 1**: Image search algorithm using color histograms and embedding
-- **Assignment 2**: Image classification benchmarks with Logistic Regression and Neural Networks
+- **Assignment 1**: Image search algorithm using color histograms and embedding search
+- **Assignment 2**: Image classification with Logistic Regression and Neural Network
 - **Assignment 3**: Transfer learning with CNNs for Lego brick classification
-- **Assignment 4**: Face detection
+- **Assignment 4**: Face detection with MTCNN
 
-## Data Setup
+## Data Preparation
 
-**Important:** Assignments includes guides on how to obtain the necessary datasets where relevant. All data should be placed in the top-level `/data` directory (outside the `/src` directory). Refer to each assignment's README for specific subdirectory structure, data requirements and download instructions.
+Assignments includes specific guides on how to obtain the necessary datasets where relevant. All data should be placed in the top-level `/data` directory (outside the `/src` directory) and have this overall structure:
+
+```
+data/
+├── 17flowers/    # Flower dataset used in Assignment 1
+├── lego/         # Lego brick dataset used in Assignment 3
+└── newspapers/   # Newspaper dataset used in Assignment 4
+```
 
 ## Quickstart
 
@@ -28,17 +49,15 @@ chmod +x run.sh
 ```
 
 This script will:
-1. Check if the environment is set up, and run setup if needed
-2. Present an interactive menu to select and run any assignment
+1. Check if the environment is setup, and if not, prompts queries whether the user would like to run `setup.py`
+2. Present an interactive menu to select and run any assignment (after environment setup completes)
 3. Display and point to results after an assignment is run.
 
 **Note:** The interactive assignment runner executes all assignments with their default configurations only. For customized runs with different parameters, please refer to the "Manual Setup and Running" section below or the assignment-specific READMEs.
 
-## Setup without using run.sh
+### Setup without using run.sh
 
 If you prefer to set up and run assignments manually, follow these steps:
-
-### Setup
 
 ```bash
 # Make the setup script executable (if needed)
@@ -78,7 +97,7 @@ uv run python -m assignment_4.main # Run face detection
 ```
 **Note:** See assignment-specific README's for more information on running individual assignments and configuration options.
 
-## Assignment Documentation
+## Assignment Specific Documentation
 
 Each assignment has its own README file with detailed information:
 
@@ -86,48 +105,3 @@ Each assignment has its own README file with detailed information:
 - [Assignment 2 README](src/assignment_2/README.md)
 - [Assignment 3 README](src/assignment_3/README.md)
 - [Assignment 4 README](src/assignment_4/README.md)
-
-## Project Structure
-
-```
-├── README.md                  # Main documentation file
-├── assignment_1/              # Assignment 1 implementation (image search)
-│   ├── README.md              # Assignment-specific documentation
-│   ├── assignment_description.md # Original assignment details
-│   ├── check_and_download_data.sh # Data download script
-│   ├── config.py              # Configuration settings
-│   ├── main.py                # Entry point for assignment 1
-│   ├── output/                # Assignment 1 specific outputs
-│   ├── scripts/               # Implementation scripts for search algorithms
-│   ├── services/              # Service components for search functionality
-│   └── utils/                 # Image utility functions
-├── assignment_2/              # Assignment 2 implementation (image classification)
-│   ├── README.md              # Assignment-specific documentation
-│   ├── assignment_description.md # Original assignment details
-│   ├── config.py              # Configuration settings
-│   ├── main.py                # Entry point for assignment 2
-│   ├── models/                # Classification model implementations
-│   ├── output/                # Output directory for results
-│   └── utils/                 # Assignment-specific utilities
-├── assignment_3/              # Assignment 3 implementation (transfer learning)
-│   ├── README.md              # Assignment-specific documentation
-│   ├── assignment_description.md # Original assignment details
-│   ├── config.py              # Configuration settings
-│   ├── data/                  # Data loading functionality
-│   ├── main.py                # Entry point for assignment 3
-│   ├── models/                # CNN and VGG16 model implementations
-│   ├── output/                # Output directory for model results
-│   └── utils/                 # Utility functions for model comparison
-├── assignment_4/              # Assignment 4 implementation (face detection)
-│   ├── README.md              # Assignment-specific documentation
-│   ├── assignment_description.md # Original assignment details
-│   ├── config.py              # Configuration settings
-│   ├── data/                  # Data service components
-│   ├── main.py                # Entry point for assignment 4
-│   ├── models/                # Face detection model implementation
-│   ├── output/                # Output directory
-│   │   ├── plots/             # Visualization plots
-│   │   └── results/           # Analysis results
-│   └── visualization/         # Visualization components
-└── shared_lib/                # Shared utilities used across assignments
-```
